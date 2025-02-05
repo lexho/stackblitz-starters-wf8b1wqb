@@ -1,0 +1,60 @@
+<%- include('_header'); -%>
+    <form id="formular" class="container" action="/page/save" method="post">
+        <input name="id" value="<%= id %>" style="display: none">
+        <input name="path" value="<%= path %>" style="display: none">
+
+    <div class="mb-3">
+        <select class="form-select" name="layout" aria-label="Layout select" onchange="change(this)">
+            <option selected>select a layout</option>
+            <option value="text-with-title">text-with-title</option>
+            <option value="gallery">gallery</option>
+            <option value="3">Three</option>
+        </select>
+    </div>
+    <div class="mb-3" style="display: none" id="heading">
+        <label for="heading" class="form-label">Überschrift</label>
+        <input type="input" name="title" value="<%= title %>" class="form-control" id="heading" aria-describedby="heading">
+    </div>
+    <div style="display: none" id="gallery">
+        <div class="mb-3">
+            <label for="foto1" class="form-label">Foto 1</label>
+            <input type="input" name="foto1" value="<%= title %>" class="form-control" id="foto1" aria-describedby="foto1">
+        </div>
+        <div class="mb-3">
+            <label for="foto2" class="form-label">Foto 2</label>
+            <input type="input" name="foto2" value="<%= title %>" class="form-control" id="foto2" aria-describedby="foto2">
+        </div>
+        <div class="mb-3">
+            <label for="foto3" class="form-label">Foto 3</label>
+            <input type="input" name="foto3" value="<%= title %>" class="form-control" id="foto3" aria-describedby="foto3">
+        </div>
+    </div>
+    <div style="display: none" id="textbox">
+        <div class="mb-3">
+            <label for="text" class="form-label">Text</label>
+            <textarea class="form-control" name="text" aria-label="With textarea" style="height: 20em;"><%= text %></textarea>
+        </div>
+    </div>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Speichern</button>
+    <script>
+        const form = document.getElementById("formular")
+        function change(selectObject) {
+            if(selectObject.value == "gallery") {
+                document.getElementById("heading").style.display = "block"
+                document.getElementById("gallery").style.display = "block"
+                document.getElementById("textbox").style.display = "none"
+            } else {
+                document.getElementById("heading").style.display = "block"
+                document.getElementById("textbox").style.display = "block"
+                document.getElementById("gallery").style.display = "none"
+            }
+        }
+    </script>
+    </form>
+    </body>
+</html>
+<%- include('_footer'); -%>

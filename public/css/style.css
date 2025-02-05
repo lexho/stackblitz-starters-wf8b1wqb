@@ -1,0 +1,34 @@
+body { 
+    font-family: Arial;
+    background-color: #fefefe; 
+    /*background-image: url('../images/DSC_0766.JPG');*/
+}
+nav, .container { border: 0px solid black; }
+.container { margin-top: 0.5em; margin-bottom: 0.5em; }
+.nav-container { height: fit-content; }
+nav { background-color: #f8f8f8; height: 1.8em; }
+.nav-item-container { background-color: hsl(0 0% 97% / 50%); }
+.background-transp { 
+    /*background-color: hsl(0 0% 97% / 80%);*/
+    background-color: #fefefe;
+}
+.nav-item {
+
+}
+.nav-link {
+    color: black; font-weight: normal; text-decoration: none; background-color: lightgray; font-size: 1.2em; height: 1.5em;  display:inline-block; padding: 0;
+}
+.nav-link:hover { color: lightgray; background-color: black; }
+.nav-item-first > a { font-weight: bold; }
+a:visited { color: black; }
+h2 { margin-top: 0.5em; }
+h3 { background-color: lightgray; }
+audio { margin-bottom: 0.5em; }
+img { max-width: 50vw; }
+a:hover { color: lightgray; background-color: black; }
+.navbar-brand { background-color: lightgray; font-weight: bold; }
+.navbar-brand:hover { color: lightgray; background-color: black; }
+.topline { letter-spacing: 0.1em; }
+.heading { font-size: 2.0em; }
+.greeter > strong { font-size: 1.5em; }
+.greeter-img { height: 490px; }

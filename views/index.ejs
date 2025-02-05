@@ -1,0 +1,15 @@
+<%- include('_header'); -%>
+<div class="container-fluid">
+<h2><%= title %></h2>
+<!--<p>Hello from <%= title %>!</p>-->
+<p><%- text %></p>
+</div>
+
+<div class="container-fluid">
+<h3>Was noch zu tun ist</h3><ul>
+<% for(let item of todo) { %>
+   <li><%= item.item %></li>
+<% } %>
+</ul>
+</div>
+<%- include('_footer'); -%>

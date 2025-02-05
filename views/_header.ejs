@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title><%= websitetitle %></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="/css/bootstrap.css" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="d-flex background-transp">
+            <h1 class="h-100 d-inline-block topline" style="width: fit-content;"><%= websitetitle %></h1>
+            <% if(cfg.build == "debug") { %><div class="h-100 d-inline-block"><%= cfg.build %> <%= cfg.version %></div><% } %>
+        </div>
+        <div class="container nav-container">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary" style="">
+                <div class="container-fluid nav-item-container" style="background-color: white;">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link navbar-brand align-middle" href="/">home</a></li><% for(let route of routes) { %>
+                        <li class="nav-item"><a class="nav-link align-middle" href="<%= route.path %>"><%= route.label.toLowerCase() %></a></li><% } %>
+                    </ul>
+                </div>
+            </nav>
+        </div>

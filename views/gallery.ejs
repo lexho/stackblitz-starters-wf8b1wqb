@@ -1,0 +1,31 @@
+<%- include('_header'); -%>
+<style>
+    img { width: 400px; height: 400px; }
+    .image { width: 400px; height: 400px; margin-bottom: 1.0em; }
+    #photobox { margin-top: 1.0em; }
+</style>
+<div id="photobox" class="container-fluid">
+    <% for(let image of images) { %><img src="images/<%= image.url %>" class="image img-fluid" alt="<%= image.alt %>">
+    <% } %>
+    <!--<div class="row">
+        <img src="" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+        <img src="images/einstein.jpg" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+        <img src="images/einstein.jpg" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+    </div>
+    <div class="row">
+        <img src="images/einstein.jpg" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+        <img src="images/einstein.jpg" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+        <img src="images/einstein.jpg" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+    </div>
+    <div class="row">
+        <img src="images/einstein.jpg" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+        <img src="images/einstein.jpg" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+        <img src="images/einstein.jpg" class="image img-fluid" alt="Einstein - ein bedeutender Wissenschafter">
+    </div>-->
+    <!--<div class="row">
+        <div style="background-image: url('images/einstein.jpg');"></div>
+        <div style="background-image: url('images/einstein.jpg');"></div>
+        <div style="background-image: url('images/einstein.jpg');"></div>
+    </div>-->
+</div>
+<%- include('_footer'); -%>
