@@ -30,19 +30,27 @@ export async function getNotes() {
 
 async function insert(page) {
     page.id = await getNextId();
-    //page.id = 0;
-    const path = "/" + page.title.toLowerCase().replaceAll(" ", "");
-    //const data = `{"id": ${page.id},"layout": "${page.layout}","title": "${page.title}","path": "${path}","text": "${page.text}"}`
-    //{ websitetitle: websitetitle, title: title, routes: routes, id: page.id, images: images, todo: todo, cfg: cfg2})
-    // gallery
-    let images = page.images;
-    let imagesString = "";
-    for(let image of images) {
-        imagesString += '{ "url":"' + image.url + '", "alt":""},';
+    const path = page.path;
+    const id = page.id
+    const layout = page.layout
+    const title = page.title
+    const text = page.text
+    if(layout == "text-with-title") {
+        const data = `{"id": ${id},"layout": "${layout}","title": "${title}","path": "${path}","text": "${text}"}`
+        appendToFile(data);
     }
-    imagesString = imagesString.substring(0, imagesString.length - 1);
-    const data = `{"id": ${page.id},"layout": "${page.layout}","title": "${page.title}","path": "${path}", "images": [${imagesString}]}`
-    appendToFile(data);
+    // gallery
+    if(layout == "gallery") {
+        const images = page.images;
+        let imagesString1 = "";
+        for(let image of images) {
+            imagesString1 += '{ "url":"' + image.url + '", "alt":""},';
+        }
+        imagesString1 = imagesString1.substring(0, imagesString1.length - 1);
+        const imagesString = imagesString1;
+        const data = `{"id": ${id},"layout": "${layout}","title": "${title}","path": "${path}", "images": [${imagesString}]}`
+        appendToFile(data);
+    }    
     return Promise.resolve();
 }
 
@@ -83,7 +91,7 @@ async function update(page) {
 }
 
 export async function save(page) {
-    if(page.id === '') {
+    if(page.id === 0) {
         insert(page)
     } else {
         update(page)
@@ -99,9 +107,6 @@ async function getNextId() {
         } catch(err) {
             console.log(err)
             content = {pages: []}
-        }
-        for(let page of content.pages) {
-            console.log(page)
         }
         id = content.pages[content.pages.length-1].id + 1
     return new Promise((resolve, reject) => {

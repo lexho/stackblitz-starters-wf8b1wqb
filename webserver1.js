@@ -3,10 +3,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import morgan from 'morgan';
 
-import { getConfig } from './model.js'
-import { getContent, getNotes } from './model_async.js';
+import { getContent, getNotes, getConfig } from './model_async.js';
 import { saveAction, formAction } from './controller.js';
-
 
 const app = express();
 
@@ -23,49 +21,62 @@ export let content = [];
 export let todo = [];
 let issues = [];
 
-let cfg1 = { websitetitle: "Alexander's Seite", loadOnTheFly: true, build: "" }
-try {
-    cfg1 = JSON.parse(getConfig()); // load config from config.json
-    console.log(cfg1)
-} catch(err) {
-    console.log(err)
-}
-const cfg = cfg1;
+const cfg = await loadConfig();
 export const cfg2 = { build: cfg.build, version: cfg.version }
+await loadContentFromFile();
 
-async function loadContentFromFile() {
+async function loadConfig() {
+    let cfg1 = { websitetitle: "Alexander's Seite", loadOnTheFly: true, build: "" }
     try {
-        //console.log(await getContent());
+        cfg1 = JSON.parse(await getConfig()); // load config from config.json
+        console.log(cfg1)
+        return cfg1;
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+async function loadContentFromFile1() {
+    try {
+        console.log(await getContent());
         content = JSON.parse(await getContent());
-        //console.log(content)
     } catch(err) {
         console.log(err)
         content = {pages: []}
     }
-    /*try {
-    content = JSON.parse(await getContent());
-    } catch(err) {
-        console.log(err)
-        content = {pages: []}
-    }*/
     if(cfg.build == "debug") {
-        try {
-            todo = JSON.parse(await getNotes()).todolist;
-        } catch(err) {
-            console.error("Error: 'todo' cannot be parsed. check './config/editorsnotes.json' for syntax errors.")
-        }
-        try {
-            issues = JSON.parse(await getNotes()).issues;
-        } catch(err) {
-            console.error("Error: 'issues' cannot be parsed. check './config/editorsnotes.json' for syntax errors.")
-        }
+        todo = JSON.parse(await getNotes()).todolist;
+        issues = JSON.parse(await getNotes()).issues;
     }
     //routes = [ { "path": "/", "label": "home"} ] ;
     routes = [] ;
     for(let page of content.pages) {
         routes.push({ path: page.path, label: page.title })
     }
-    routes.push({ path: '/page/new', label: "New" })
+    routes.push({ path: '/page/new', label: "Neue Seite" })
+    setAppGetPages();
+}
+
+async function loadContentFromFile() {
+    try {
+        //console.log(await getContent());
+        content = JSON.parse(await getContent());
+        console.log(content)
+    } catch(err) {
+        console.log(err)
+        content = {pages: []}
+    }
+    let cfg = loadConfig()
+    if(cfg.build == "debug") {
+        todo = JSON.parse(await getNotes()).todolist;
+        issues = JSON.parse(await getNotes()).issues;
+    }
+    //routes = [ { "path": "/", "label": "home"} ] ;
+    routes = [] ;
+    for(let page of content.pages) {
+        routes.push({ path: page.path, label: page.title })
+    }
+    routes.push({ path: '/page/new', label: "Neue Seite" })
     setAppGetPages();
 }
 
@@ -98,8 +109,6 @@ function setAppGetPages() {
     app.get('/page/new/:id?', formAction);
     app.post('/page/save', saveAction)
 }
-
-loadContentFromFile();
 
 app.listen(8080, () => {
     console.log('App erreichbar unter http://localhost:8080')

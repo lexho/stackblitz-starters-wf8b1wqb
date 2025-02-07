@@ -5,6 +5,7 @@ describe('view', () => {
         websitetitle: "test site",
         routes: [{ "path": "/", "label": "home"}, { "path": "/route1", "label": "Route 1"}, { "path": "/route2", "label": "Route 2"}],
         id: 0,
+        title1: "Neue Seite",
         path: "/", 
         title: "testpage",
         text: "",
@@ -53,7 +54,7 @@ describe('view', () => {
         });
         it('should render ' + filename + ' view form', () => {
             ejs.renderFile(filepath, params, (err, data) => {
-                expect(data).toContain('<form class="container" action="/page/save" method="post">')
+                expect(data).toContain('<form id="formular" class="container" action="/page/save" method="post">')
             });
         });
     });
