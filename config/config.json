@@ -1,6 +1,6 @@
 {
     "websitetitle": "Alexander's Seite",
-    "version": "0.2",
+    "version": "0.7",
     "build": "release",
     "loadOnTheFly": true
 }

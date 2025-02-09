@@ -2,8 +2,6 @@ import { replaceUmlaute } from './utility.js';
 import { content, routes, cfg2, todo } from './webserver.js';
 import { getContent, save } from './model_async.js';
 
-//let data { routes: routes, id: id, path: path, layout: layout, title: title, text: text, todo: todo }
-
 export async function saveAction(request, response) {
     if(request.body.layout == "text-with-title") {
         // text-with-title layout
@@ -14,7 +12,6 @@ export async function saveAction(request, response) {
             text: request.body.text,
             path: "/" + replaceUmlaute(request.body.title.toLowerCase().replaceAll(" ", ""))
         };
-        console.log();
         if(page.id == 0) console.log("insert page: ")
         else console.log("updated page: ")
         console.log(page)
@@ -23,21 +20,27 @@ export async function saveAction(request, response) {
     }
     if(request.body.layout == "gallery") {
         // gallery
+        const id = parseInt(request.body.id)
+        const layout = request.body.layout
+        const title = request.body.title
+        const text = request.body.text
+        const path = replaceUmlaute(title.toLowerCase().replaceAll(" ", ""))
+        const images = request.body.images
         const page = {
-            id: parseInt(request.body.id),
-            layout: request.body.layout,
-            title: request.body.title,
-            text: request.body.text,
-            path: "/" + replaceUmlaute(request.body.title.toLowerCase().replaceAll(" ", "")),
-            images: [{"url":request.body.foto1,"alt":""}, {"url":request.body.foto2,"alt":""}, {"url":request.body.foto3,"alt":""}]
+            id: id,
+            layout: layout,
+            title: title,
+            text: text,
+            path: "/" + path,
+            images: images
         };
+        console.log(page)
         if(page.id == 0) console.log("insert page: ")
             else console.log("updated page: ")
         console.log(page)
         console.log();
         await save(page)
     }
-    //response.render('form', { websitetitle: content.websitetitle, routes: routes, id: page.id, title: page.title, text: page.text, todo: todo })
     response.redirect("/");
 }
 

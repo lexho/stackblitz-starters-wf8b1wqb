@@ -1,7 +1,7 @@
 <%- include('_header'); -%>
-    <form id="formular" class="container" action="/page/save" method="post">
+    <div id="formular" class="container">
         <h2><%= title1 %></h2>
-        <input name="id" value="<%= id %>" style="display: none">
+        <input id="id" name="id" value="<%= id %>" style="display: none">
         <input name="path" value="<%= path %>" style="display: none">
 
     <div class="mb-3">
@@ -12,38 +12,111 @@
             <option value="3">Three</option>
         </select>
     </div>
+    <% title = "photo gallery"; photo1 = "foto1.jpg"; photo2 = "foto2.jpg"; photo3 = "foto3.jpg"; %>
     <div class="mb-3" style="display: none" id="heading">
         <label for="heading" class="form-label">Überschrift</label>
-        <input type="input" name="title" value="<%= title %>" class="form-control" id="heading" aria-describedby="heading">
+        <input id="heading1" type="input" name="title" value="<%= title %>" class="form-control" aria-describedby="heading">
     </div>
     <div style="display: none" id="gallery">
+        
         <div class="mb-3">
             <label for="foto1" class="form-label">Foto 1</label>
-            <input type="input" name="foto1" value="<%= title %>" class="form-control" id="foto1" aria-describedby="foto1">
+            <input type="input" name="foto1" value="<%= photo1 %>" class="foto form-control" id="foto1" aria-describedby="foto1">
         </div>
         <div class="mb-3">
             <label for="foto2" class="form-label">Foto 2</label>
-            <input type="input" name="foto2" value="<%= title %>" class="form-control" id="foto2" aria-describedby="foto2">
+            <input type="input" name="foto2" value="<%= photo2 %>" class="foto form-control" id="foto2" aria-describedby="foto2">
         </div>
         <div class="mb-3">
             <label for="foto3" class="form-label">Foto 3</label>
-            <input type="input" name="foto3" value="<%= title %>" class="form-control" id="foto3" aria-describedby="foto3">
+            <input type="input" name="foto3" value="<%= photo3 %>" class="foto form-control" id="foto3" aria-describedby="foto3">
         </div>
+            <button type='button' class="btn btn-secondary" onClick="plus()" value="plus1">plus</button>
     </div>
     <div style="display: none" id="textbox">
         <div class="mb-3">
             <label for="text" class="form-label">Text</label>
-            <textarea class="form-control" name="text" aria-label="With textarea" style="height: 20em;"><%= text %></textarea>
+            <textarea id="text" class="form-control" name="text" aria-label="With textarea" style="height: 20em;"><%= text %></textarea>
         </div>
     </div>
     <div class="mb-3 form-check">
         <input type="checkbox" class="form-check-input" id="exampleCheck1">
         <label class="form-check-label" for="exampleCheck1">Check me out</label>
     </div>
-    <button type="submit" class="btn btn-primary">Speichern</button>
+    <button type="submit" onClick="sendPostRequest()" class="btn btn-primary">Speichern</button>
     <script>
+        /*
+            const id = parseInt(request.body.id)
+        const layout = request.body.layout
+        const title = request.body.title
+        const text = request.body.text
+        const path = replaceUmlaute(title.toLowerCase().replaceAll(" ", ""))
+        const images = request.body.images*/
+        let layout
+        function getImages() {
+                let images = [];
+                const gallery = document.getElementById("gallery")
+                gallery.querySelectorAll(".foto").forEach(elem => {
+                    console.log(elem)
+                    console.log(elem.value)
+                    images.push({url: elem.value, alt: ""})
+                })
+                console.log(images)
+                return images
+            }
+        async function sendPostRequest() {
+        
+                let data = { 
+                    id: parseInt(document.getElementById("id").value),
+                    layout: layout,
+                    title: document.getElementById("heading1").value,
+                    text: document.getElementById("text").value,
+                    images: []}
+                //data.layout = "gallery"
+                data.images = getImages()
+                console.log(data)
+                try {
+                    const response = await fetch('/page/save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        console.log('Data saved successfully');
+                    } else {
+                        console.error('Error saving data');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+                window.open("/","_self")
+            }
+            getImages();
+            let counter = 3;
+            function plus() {
+                let elems = []; let parents = [];
+                counter++;
+                elems.push(document.getElementById("gallery"));
+                elem = document.createElement("div"); elem.setAttribute("class", "mb-3"); elems.push(elem); parents.push(0);
+                elem = document.createElement("label"); elem.textContent = "Foto "+counter;
+                elem.setAttribute("for", "foto"+counter); elem.setAttribute("class", "form-label"); elems.push(elem); parents.push(1);
+                elem = document.createElement("input"); elem.setAttribute("type", "input"); elem.setAttribute("name", "foto"+counter); 
+                elem.setAttribute("value", "foto1.jpg"); elem.setAttribute("class", "foto form-control"); elem.setAttribute("id", "foto"+counter);
+                 elem.setAttribute("aria-describedby", "foto"+counter); elems.push(elem); parents.push(1);
+                
+                // append nodes to DOM
+                console.log(parents);
+                for(let i = 0; i < parents.length; i++) {
+                    elems[parents[i]].appendChild(elems[i+1]);
+                }
+            }
+
         const form = document.getElementById("formular")
         function change(selectObject) {
+            layout = selectObject.value
             if(selectObject.value == "gallery") {
                 document.getElementById("heading").style.display = "block"
                 document.getElementById("gallery").style.display = "block"
@@ -55,7 +128,7 @@
             }
         }
     </script>
-    </form>
+    </div><!--form-->
     </body>
 </html>
 <%- include('_footer'); -%>

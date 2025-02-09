@@ -13,6 +13,7 @@ const app = express();
 app.set('view engine', 'ejs')
 
 app.use(express.static(`${dirname(fileURLToPath(import.meta.url))}/public`))
+app.use(express.json())
 
 app.use(morgan('common', { immediate: true }));
 
@@ -35,19 +36,11 @@ export const cfg2 = { build: cfg.build, version: cfg.version }
 
 async function loadContentFromFile() {
     try {
-        //console.log(await getContent());
         content = JSON.parse(await getContent());
-        //console.log(content)
     } catch(err) {
         console.log(err)
         content = {pages: []}
     }
-    /*try {
-    content = JSON.parse(await getContent());
-    } catch(err) {
-        console.log(err)
-        content = {pages: []}
-    }*/
     if(cfg.build == "debug") {
         try {
             todo = JSON.parse(await getNotes()).todolist;
@@ -65,7 +58,7 @@ async function loadContentFromFile() {
     for(let page of content.pages) {
         routes.push({ path: page.path, label: page.title })
     }
-    routes.push({ path: '/page/new', label: "New" })
+    routes.push({ path: '/page/new', label: "Neue Seite" })
     setAppGetPages();
 }
 
@@ -87,6 +80,9 @@ function setAppGetPages() {
                 res.render('text-with-title', { websitetitle: websitetitle, title: title, routes: routes, id: page.id, text: text, todo: todo, cfg: cfg2})
             else if(layout == "gallery")
                 res.render('gallery', { websitetitle: websitetitle, title: title, routes: routes, id: page.id, images: images, todo: todo, cfg: cfg2})
+            else if(layout == "text-with-gallery")
+                res.render('text-with-gallery', { websitetitle: websitetitle, title: title, routes: routes, id: page.id, text: text, images: images, todo: todo, cfg: cfg2})
+            
             else
                 res.render('index', { websitetitle: websitetitle, title: title, routes: routes, id: page.id, text: text, todo: todo, cfg: cfg2})
         });
