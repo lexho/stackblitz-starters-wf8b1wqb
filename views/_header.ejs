@@ -7,13 +7,13 @@
         <link href="/css/style.css" rel="stylesheet">
     </head>
     <body>
-        <div class="d-flex background-transp">
-            <h1 class="h-100 d-inline-block topline" style="width: fit-content;"><%= websitetitle %></h1>
+        <header class="d-flex background-transp">
+            <h1 class="h-100 d-inline-block topline"><%= websitetitle %></h1>
             <% if(cfg.build == "debug") { %><div class="h-100 d-inline-block"><%= cfg.build %> <%= cfg.version %></div><% } %>
-        </div>
+        </header>
         <div class="container nav-container">
-            <nav class="navbar navbar-expand-lg bg-body-tertiary" style="">
-                <div class="container-fluid nav-item-container" style="background-color: white;">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                <div class="container-fluid nav-item-container">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item"><a class="nav-link navbar-brand align-middle" href="/">home</a></li><% for(let route of routes) { %>
                         <li class="nav-item"><a class="nav-link align-middle" href="<%= route.path %>"><%= route.label.toLowerCase() %></a></li><% } %>
@@ -21,3 +21,90 @@
                 </div>
             </nav>
         </div>
+        <!--<nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">Navbar</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Features</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing a long link descr</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>-->

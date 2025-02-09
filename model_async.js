@@ -35,13 +35,13 @@ async function insert(page) {
     const layout = page.layout
     const title = page.title
     const text = page.text
+    const images = page.images;
     if(layout == "text-with-title") {
         const data = `{"id": ${id},"layout": "${layout}","title": "${title}","path": "${path}","text": "${text}"}`
         appendToFile(data);
     }
     // gallery
     if(layout == "gallery") {
-        const images = page.images;
         let imagesString1 = "";
         for(let image of images) {
             imagesString1 += '{ "url":"' + image.url + '", "alt":""},';
@@ -57,7 +57,6 @@ async function insert(page) {
 async function update(page) {
     const id = parseInt(page.id, 10);
     const index = id - 1;
-    //console.log("id: "+ id)
     let content = [];
     try {
         content = JSON.parse(await getContent());
@@ -65,22 +64,10 @@ async function update(page) {
         console.log(err)
         content = {pages: []}
     }
-    /*console.log("updated page: " + JSON.stringify(page))
-    console.log();
-    console.log("id: "+ content.pages[index].id)
-    console.log("title: "+ content.pages[index].title)
-    console.log("text: "+ content.pages[index].text.substring(0,100))
-    console.log();*/
     content.pages[index].title = page.title;
     content.pages[index].text = page.text;
     content.pages[index].id = id;
-    /*console.log("updated page (integrated in content): ")
-    console.log("id: "+ content.pages[index].id)
-    console.log("title: "+ content.pages[index].title)
-    console.log("text: "+ content.pages[index].text.substring(0,100) + "...")*/
     const json = JSON.stringify(content)
-    //console.log();
-    //console.log("modified content json-string: \n" + json + "\n")
     writeFile(filename, json, err => {
         if (err) {
           console.error(err);
@@ -117,22 +104,6 @@ async function getNextId() {
 const filename = "config/content.json"
 
 async function appendToFile(data) {
-    /*const id = 0
-    const layout = "text-with-title"
-    const title = "Titel"
-    const path = "entry"
-    const text = "hier kommt der text."
-
-    const data = `{
-                "id": ${id},
-                "layout": "${layout}",
-                "title": "${title}",
-                "path": "${path}",
-                "text": "${text}"
-            }`
-    */
-
-    //const data = ",\n        " + "{\n            \"data\":\"some new data\"\n        }\n " + "    ]\n}\n"
     const data1 = "," + data + "]}"
     const stat = await promises.stat(filename)
     const fileSize = stat.size

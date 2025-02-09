@@ -1,16 +1,18 @@
-<aside class="container-fluid notesbox"><% if (todo.length > 0) { %>
-    <h3 style="font-size: 1.3em;">Was noch zu tun ist</h3>
-    <ul><% for(let item of todo) { %>
-       <li><%= item.item %></li><% }} %>
-    </ul>
-    <% if (typeof(issues) != "undefined") { %>
-    <% if (issues.length > 0) { %><h3 style="font-size: 1.3em;">Issues</h3>
-    <ul><% for(let item of issues) { let showSolved = false; %>
-        <% if (!item.solved || showSolved) { %><li class="issue<% if (item.solved) { %> solved<% } %>"><%= item.issue %></li><% }} %>
-    <% } %>
-    </ul>
-    <% } %>
-</aside>
+<footer>
+    <aside class="container-fluid notesbox"><% if (todo.length > 0) { %>
+        <h3 style="font-size: 1.3em;">Was noch zu tun ist</h3>
+        <ul><% for(let item of todo) { %>
+        <li><%= item.item %></li><% }} %>
+        </ul>
+        <% if (typeof(issues) != "undefined") { %>
+        <% if (issues.length > 0) { %><h3 style="font-size: 1.3em;">Issues</h3>
+        <ul><% for(let item of issues) { let showSolved = false; %>
+            <% if (!item.solved || showSolved) { %><li class="issue<% if (item.solved) { %> solved<% } %>"><%= item.issue %></li><% }} %>
+        <% } %>
+        </ul>
+        <% } %>
+    </aside>
+</footer>
 
 <script src="/js/bootstrap.bundle.min.js"></script>
 </body>

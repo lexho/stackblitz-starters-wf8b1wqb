@@ -1,25 +1,7 @@
 import { getContent, getNotes, getConfig } from '../model_async.js';
 
-describe('Calc', () => {
-    //let calc;
-    /*beforeEach(() => {
-        calc = new Calc();
-    });*/
-
-    /*describe('add', () => {
-        it('should add 1 and 1 and return 2', () => {
-            const result = calc.add(1,1);
-            expect(result).toBe(2);
-        });
-    });*/
-});
-
 describe('model', () => {
-    //let calc;
-    /*beforeEach(() => {
-        calc = new Calc();
-    });*/
-
+    
     describe('getContent().websitetitle', () => {
         it('should return websitetitle', async () => {
             const content = JSON.parse(await getContent());

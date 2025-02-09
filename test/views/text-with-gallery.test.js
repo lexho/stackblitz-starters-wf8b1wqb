@@ -8,11 +8,12 @@ describe('view', () => {
         path: "/", 
         title: "testpage",
         text: "",
+        images: [],
         todo: [],
         issues:[],
         cfg: { build: "debug", version: "0.0" }
     }
-    const filename = "text-with-title1";
+    const filename = "text-with-gallery";
     const file = filename + ".ejs"; // try assets/fake.ejs to test the test, all tests should fail
     const filepath = "views/" + file;
     beforeAll(() => {

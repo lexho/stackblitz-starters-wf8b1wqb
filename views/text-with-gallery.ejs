@@ -1,0 +1,20 @@
+<%- include('_header'); -%>
+
+<main id="content" class="container-fluid">
+    <div class="row align-items-start">
+        <div class="col">
+            <h2><%= title %> <a href="/page/new/<%= id %>"><span class="badge text-bg-primary">edit<span></a></h2>
+            <text><p><%- text %></p></text>
+            <style>
+                .foto { height: 300px; }
+                </style>
+            <gallery></gallery>
+            <div id="photobox" class="container-fluid">
+                <% for(let image of images) { %><img src="images/<%= image.url %>" class="image img-fluid foto" alt="<%= image.alt %>">
+                <% } %>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('_footer'); -%>

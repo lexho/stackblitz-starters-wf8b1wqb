@@ -54,7 +54,19 @@ describe('view', () => {
         });
         it('should render ' + filename + ' view form', () => {
             ejs.renderFile(filepath, params, (err, data) => {
-                expect(data).toContain('<form id="formular" class="container" action="/page/save" method="post">')
+                expect(data).toContain('<div id="formular" class="container"')
+            });
+        });
+        
+        it('should render ' + filename + ' view form', () => {
+            ejs.renderFile(filepath, params, (err, data) => {
+                expect(data.replace(/\s/g,'')).toContain(`const response = await fetch('/page/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });`.replace(/\s/g,''))
             });
         });
     });
