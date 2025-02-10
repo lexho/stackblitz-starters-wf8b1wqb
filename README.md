@@ -1,4 +1,4 @@
-# webserver.js - Basismodul
+# webserver.js
 
 #### run locally
     npm install
@@ -9,3 +9,7 @@
 edit config files
 - config.json
 - content.json
+
+#### Customize Style
+- edit the stylesheet style.css
+content.style from content.json defines which style will be used
