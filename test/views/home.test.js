@@ -1,13 +1,19 @@
 import ejs from 'ejs';
 
 describe('view', () => {
+                    /* cfg2.routes = routes;
+        cfg2.todo = todo;
+        cfg2.issues = issues;
+        cfg2.websitetitle = cfg.websitetitle
+        const cfg1 = cfg2
+        res.render('home', { cfg: cfg1, websitetitle: cfg1.websitetitle, text: "" })*/
     const params = {
+        cfg:  { build: "debug", version: "0.0", websitetitle: "test site",
+            routes: [{ "path": "/", "label": "home"}, { "path": "/route1", "label": "Route 1"}, { "path": "/route2", "label": "Route 2"}],
+        todo: [], issues: []
+        }, 
         websitetitle: "test site",
-        routes: [{ "path": "/", "label": "home"}, { "path": "/route1", "label": "Route 1"}, { "path": "/route2", "label": "Route 2"}],
-        text: "",
-        todo: [],
-        issues:[],
-        cfg: { build: "debug", version: "0.0" }
+        text: ""
     }
     const file = "views/home.ejs"; // try assets/fake.ejs to test the test, all tests should fail
     beforeAll(() => {
@@ -37,7 +43,7 @@ describe('view', () => {
                 expect(data).toContain('<li class="nav-item"><a class="nav-link navbar-brand align-middle" href="/">home</a></li>')
                 //expect(data).toContain(`<li class="nav-item"><a class="nav-link align-middle" href="${params.routes[1].path}">${params.routes[1].label.toLowerCase()}</a></li>`)
                 
-                for(let route of params.routes) {
+                for(let route of params.cfg.routes) {
                     expect(data).toContain(`<li class="nav-item"><a class="nav-link align-middle" href="${route.path}">${route.label.toLowerCase()}</a></li>`)
                 }
             });

@@ -8,18 +8,36 @@ export function getConfig() {
     }
 }
 
-export function getContent() {
+let content
+/** load content from file and store it in RAM */
+export function getContentFromFile() {
     try {
-        return readFileSync('./config/content.json', 'utf-8')
+        const data = readFileSync('./config/content.json', 'utf-8')
+        content = JSON.parse(data)
+        return data
     } catch(err){
         console.log(err)
     } 
 }
 
-export function getNotes() {
+/** load content from RAM */
+export function getContent() {
+    //console.log("load content from RAM")
+    return content;
+}
+
+let notes
+export function getNotesFromFile() {
     try {
-        return readFileSync('./config/editorsnotes.json', 'utf-8')
+        const data = readFileSync('./config/editorsnotes.json', 'utf-8')
+        notes = JSON.parse(data)
+        return data;
     } catch(err){
         console.log(err)
     }
+}
+
+export function getNotes() {
+    //console.log("load notes from RAM")
+    return notes
 }

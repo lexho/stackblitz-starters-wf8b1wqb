@@ -5,19 +5,29 @@
   "type": "module",
   "scripts": {
     "start": "node webserver.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "sass": "node sass.js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@babel/preset-env": "^7.26.8",
+    "babel-jest": "^29.7.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "formidable": "^3.5.2",
     "http": "^0.0.1-security",
     "jest": "^29.7.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.9",
     "path": "^0.12.7",
+    "sass": "^1.84.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
     "url": "^0.11.4"
+  },
+  "devDependencies": {
+    "jsdoc": "^4.0.4"
   }
 }

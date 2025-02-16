@@ -1,4 +1,7 @@
 <footer>
+    <% const todo = cfg.todo 
+       const issues = cfg.issues
+    %>
     <aside class="container-fluid notesbox"><% if (todo.length > 0) { %>
         <h3 style="font-size: 1.3em;">Was noch zu tun ist</h3>
         <ul><% for(let item of todo) { %>
