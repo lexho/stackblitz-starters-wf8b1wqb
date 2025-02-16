@@ -1,7 +1,7 @@
 import ejs from 'ejs';
 
 describe('view', () => {
-    const params = {
+    /*const params = {
         websitetitle: "test site",
         routes: [{ "path": "/", "label": "home"}, { "path": "/route1", "label": "Route 1"}, { "path": "/route2", "label": "Route 2"}],
         id: 0,
@@ -12,7 +12,23 @@ describe('view', () => {
         todo: [],
         issues:[],
         cfg: { build: "debug", version: "0.0" }
-    }
+    }*/
+        const params = {
+            cfg:  { build: "debug", version: "0.0",websitetitle: "test site",
+                routes: [{ "path": "/", "label": "home"}, { "path": "/route1", "label": "Route 1"}, { "path": "/route2", "label": "Route 2"}],
+            todo: [], issues: []
+            }, 
+            title: "title", 
+            title1: "title1",
+            id: 0, 
+            path: "",
+            photo1: "",
+            photo2: "",
+            photo3: "",
+            images: [{url: "", alt: ""}],
+            text: "text"
+        }
+    // views/form.ejs
     const filename = "form";
     const file = filename + ".ejs"; // try assets/fake.ejs to test the test, all tests should fail
     const filepath = "views/" + file;
@@ -33,7 +49,7 @@ describe('view', () => {
         });
         it('should render ' + filename + ' view title', () => {
             ejs.renderFile(filepath, params, (err, data) => {
-                expect(data).toContain(`<title>${params.websitetitle}</title>`)
+                expect(data).toContain(`<title>${params.cfg.websitetitle}</title>`)
             });
         });
         it('should render ' + filename + ' view menu', () => {
@@ -41,7 +57,7 @@ describe('view', () => {
                 expect(data).toContain('<li class="nav-item"><a class="nav-link navbar-brand align-middle" href="/">home</a></li>')
                 //expect(data).toContain(`<li class="nav-item"><a class="nav-link align-middle" href="${params.routes[1].path}">${params.routes[1].label.toLowerCase()}</a></li>`)
                 
-                for(let route of params.routes) {
+                for(let route of params.cfg.routes) {
                     expect(data).toContain(`<li class="nav-item"><a class="nav-link align-middle" href="${route.path}">${route.label.toLowerCase()}</a></li>`)
                 }
             });

@@ -1,4 +1,5 @@
-import { getContent, getNotes, getConfig } from '../model_async.js';
+import { readFile } from 'node:fs/promises';
+import { getContent, getNotes, getConfig, save, setFilename } from '../model_async.js';
 
 describe('model', () => {
     
@@ -22,4 +23,29 @@ describe('model', () => {
             expect(typeof(todo)).toBe("object");
         });
     });
+
+    describe('read/write', () => {
+        it('should write', async () => {
+            const filename = 'test/testfile.json'
+            setFilename(filename)
+            const page = {
+                id: 0,
+                layout: "text-with-title",
+                path: "page.path",
+                title: "page.title",
+                text: "page.text"
+            }
+            save(page)
+            let data1;
+            try {
+                data1 = await readFile(filename, 'utf-8')
+                //console.log(data1)
+            } catch(err){
+                console.log(err)
+            }
+            const data = data1
+            expect(data).toContain("page.title");
+            
+        });
+    })
 });

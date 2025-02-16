@@ -1,0 +1,29 @@
+<%- include('../_header'); -%>
+
+<main id="content" class="container-fluid">
+    <div class="row align-items-start">
+        <div class="col">
+            <h2><%= title %> <a href="/page/new/<%= id %>"><span class="badge text-bg-primary">edit<span></a></h2>
+            <p><%- text %></p>
+            <div style="border: 1px solid black">
+                <h5>Gästebucheintrag</h5>
+                <p>von Hansi</p>
+                <p>Hallo Alex!
+                    Wie geht es dir?
+                    Gruß Hansi
+                </p>
+            </div>
+            <div style="border: 1px solid black">
+                <h5>Gästebucheintrag</h5>
+                <p>von Lea</p>
+                <p>Hallo Alex!
+                    Schon lange nichts mehr von dir gehört.
+                    Gruß Lea
+                </p>
+            </div>
+        </div>
+        <div class="col"><div class="img-fluid img-placeholder" alt="placeholder image"></div>
+    </div>
+</main>
+
+<%- include('../_footer'); -%>

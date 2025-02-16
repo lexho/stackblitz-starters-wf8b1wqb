@@ -2,9 +2,10 @@ import ejs from 'ejs';
 
 describe('view', () => {
     const params = {
+        cfg: { todo: [],
+            issues:[]},
         text: "",
-        todo: [],
-        issues:[],
+       
     }
     const file = "views/_footer.ejs"; // try assets/fake.ejs to test the test, all tests should fail
     beforeAll(() => {

@@ -1,0 +1,80 @@
+<%- include('_header'); -%>
+    <div id="formular" class="container">
+        <h2><%= title %></h2>
+        <h3>Select Website-Style</h3>
+        <div id="container" class="container-fluid">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="default"<% if(checked == 'default') { %> checked<% }%>>
+                <label class="form-check-label" for="flexRadioDefault1">
+                    Default
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="bootstrap"<% if(checked == 'bootstrap') { %> checked<% }%>>
+                <label class="form-check-label" for="flexRadioDefault2">
+                    Bootstrap
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="stylecss"<% if(checked == 'stylecss') { %> checked<% }%>>
+                <label class="form-check-label" for="flexRadioDefault3">
+                    style.css
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="style2css"<% if(checked == 'style2css') { %> checked<% }%>>
+                <label class="form-check-label" for="flexRadioDefault3">
+                    style2.css
+                </label>
+            </div>
+        </div>
+        <div style="height: 100px"></div>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">setting1</label>
+    </div>
+    <button type="submit" onClick="sendPostRequest()" class="btn btn-primary">Speichern</button>
+    <script>
+        function getSettings() {
+                let lines = [];
+                const container = document.getElementById("container")
+                container.querySelectorAll(".form-check-input").forEach(elem => {
+                    //console.log(elem)
+                    //console.log(elem.value)
+                    lines.push({
+                            id: elem.id,
+                            checked: elem.checked ? "checked" : "",
+                    })
+                })
+                //console.log(lines)
+                return lines
+            }
+        async function sendPostRequest() {
+        
+            let data = { lines: [] }
+            data.style = getSettings()
+            console.log(data)
+            try {
+                    const response = await fetch('/settings/save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        console.log('Data saved successfully');
+                    } else {
+                        console.error('Error saving data');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+                window.open("/","_self")
+        }
+    </script>
+    </div><!--form-->
+    </body>
+</html>
+<%- include('_footer'); -%>
