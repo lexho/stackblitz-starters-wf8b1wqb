@@ -11,6 +11,7 @@ edit config files from the config folder
 - content.json
 
 #### Customize Style
-- edit the stylesheet style.css
+- select a style from the menu
+- or edit the stylesheet style.css
 
 The content.style variable from content.json defines which style will be used.
