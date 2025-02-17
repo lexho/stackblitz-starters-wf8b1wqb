@@ -159,7 +159,3 @@ a:visited {
 .solved::marker {
   color: limegreen;
 }
-
-header {
-  background: linear-gradient(0.25turn, white, #3f87a6);
-}

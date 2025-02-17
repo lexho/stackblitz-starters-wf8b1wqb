@@ -1,0 +1,51 @@
+:root {
+    --ivory: hsl(40, 71%, 86%);
+    --organic: hsl(69, 18%, 22%);
+    --apricot: hsl(33, 68%, 52%);
+    --natural: hsl(31, 20%, 53%);
+}
+body {
+    background-color: var(--ivory); 
+    color: var(--organic);
+}
+
+
+header {
+    width: 100%;
+    height: 100px;
+}
+header > * {
+    color: var(--ivory);
+}
+.background-transp {
+    background-color: var(--natural);
+}
+.topline {
+    background-color: var(--natural);
+    color: var(--ivory);
+}
+
+.nav-item-container, .nav-link  {
+    background-color: var(--ivory);
+}
+.nav-link, .nav-link:visited {
+    color: var(--apricot);
+}
+.nav-link:hover {
+    background-color: var(--natural);
+    color: var(--organic);
+}
+
+h1 {
+    color: var(--organic);
+}
+/*.nav-container, .navbar, .nav-item-container {
+    border: 2px solid var(--apricot);
+    background: var(--apricot);
+}*/
+
+/*.navbar {
+    border-top: 2px solid var(--apricot);
+    border-bottom: 2px solid var(--apricot);
+    background-color: var(--apricot);
+}*/
