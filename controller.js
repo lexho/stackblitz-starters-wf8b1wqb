@@ -3,6 +3,7 @@ import { replaceUmlaute } from './utility.js';
 import { save, saveSettings } from './model_async.js';
 import { getContent } from './model_async.js';
 import { readFile, rename, copyFile, constants } from 'fs';
+import { setAppGetPages } from './webserver.js';
 
 /** set parameter to render page
  * @param {Object} req - request, which contains page and config data
@@ -32,22 +33,71 @@ export async function pageAction(req, res) {
         res.render('index', { cfg: cfg, title: title, id: id, text: text})
 }
 
+/** generates new page or edit */
+export async function formAction(request, response) {
+    let page = { id: '', title: '', text: '' }
+    const cfg = request.cfg
+    if(request.params.id) { // edit
+        let content1 = await getContent();
+        page = content1.pages[parseInt(request.params.id, 10)-1]
+    
+        const id = page.id;
+        const path = page.path;
+        const layout = page.layout;
+        const title = page.title;
+        const text = page.text;
+        response.render('edit', { cfg: cfg, title1: "Neue Seite", id: id, path: path, layout: layout, heading: title, text: text })
+    } else { // new
+        const id = 0;
+        const path = "";
+        const layout = "";
+        const title = "";
+        const text = "";
+        response.render('form', { cfg: cfg, title1: "Neue Seite", id: id, path: path, layout: layout, title: title, text: text })
+    }
+}
+
 /** saves page to file 
  * @param {Object} request contains the page
  * @param {Object} response redirects to home
 */
 export async function saveAction(request, response) {
-    const form = formidable( { allowEmptyFiles : true, minFileSize: 0 });
+    // text-with-title layout
+    let id
+    if(request.body.id === undefined) id = 0;
+    else id = request.body.id;
+    let images = [];
+    if(Array.isArray(request.body.multipleFiles)) {
+        for(let image of request.body.multipleFiles) {
+            images.push({url: image, alt: ""})
+        }
+    } else {
+        images.push({url: request.body.multipleFiles, alt: ""})
+    }
+    const page = {
+        id: id,
+        layout: request.body.layout,
+        title: request.body.heading,
+        images: images,
+        text: request.body.text,
+        path: "/" + replaceUmlaute(request.body.heading.toLowerCase().replaceAll(" ", ""))
+    };
+    //console.log(page)
+    //console.log();
+    await save(page)
+    /*const form = formidable( { allowEmptyFiles : true, minFileSize: 0 });
     let fields;
     let files;
     try {
+        console.log("form parse")
         [fields, files] = await form.parse(request);
+        console.log("form parsed")
     } catch (err) {
         // example to check for a very specific error
         if (err.code === formidableErrors.maxFieldsExceeded) {
 
         }
-        console.error(err);
+        console.error("catched Error" + err);
     }
     console.log("fields: ")
     console.log(JSON.stringify({ fields, files }, null, 2))
@@ -104,31 +154,9 @@ export async function saveAction(request, response) {
         console.log();
         await save(page)
     }
+    // routes neu bauen*/
+    setAppGetPages()
     response.redirect("/");
-}
-
-/** generates new page or edit */
-export async function formAction(request, response) {
-    let page = { id: '', title: '', text: '' }
-    const cfg = request.cfg
-    if(request.params.id) { // edit
-        let content1 = getContent();
-        page = content1.pages[parseInt(request.params.id, 10)-1]
-    
-        const id = page.id;
-        const path = page.path;
-        const layout = page.layout;
-        const title = page.title;
-        const text = page.text;
-        response.render('edit', { cfg: cfg, id: id, path: path, layout: layout, title: title, text: text })
-    } else { // new
-        const id = 0;
-        const path = "";
-        const layout = "";
-        const title = "";
-        const text = "";
-        response.render('form', { cfg: cfg, title1: "Neue Seite", id: id, path: path, layout: layout, title: title, text: text })
-    }
 }
 
 /** saves the settings */

@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs';
+import { storeContent, storeNotes, getContent as getContentStorage, getNotes as getNotesStorage } from './storage_ram.js';
 
 export function getConfig() {
     try {
@@ -8,12 +9,11 @@ export function getConfig() {
     }
 }
 
-let content
 /** load content from file and store it in RAM */
 export function getContentFromFile() {
     try {
         const data = readFileSync('./config/content.json', 'utf-8')
-        content = JSON.parse(data)
+        storeContent(JSON.parse(data))
         return data
     } catch(err){
         console.log(err)
@@ -22,15 +22,13 @@ export function getContentFromFile() {
 
 /** load content from RAM */
 export function getContent() {
-    //console.log("load content from RAM")
-    return content;
+    return getContentStorage();
 }
 
-let notes
 export function getNotesFromFile() {
     try {
         const data = readFileSync('./config/editorsnotes.json', 'utf-8')
-        notes = JSON.parse(data)
+        storeNotes(JSON.parse(data))
         return data;
     } catch(err){
         console.log(err)
@@ -38,6 +36,5 @@ export function getNotesFromFile() {
 }
 
 export function getNotes() {
-    //console.log("load notes from RAM")
-    return notes
+    return getNotesStorage()
 }

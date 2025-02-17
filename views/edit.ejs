@@ -1,53 +1,36 @@
 <%- include('_header'); -%>
-    <form id="formular" class="container" action="/page/save" method="post">
+<style>
+    .form-select {
+        max-width: 300px;
+    }
+    input {
+        max-width: 300px;
+    }
+    textarea {
+        max-width: 600px;
+        height: 250px;
+    }
+</style>
+<form action="/page/save" class="container" method="post">
+
         <input name="id" value="<%= id %>" style="display: none">
         <input name="path" value="<%= path %>" style="display: none">
         <input name="layout" value="<%= layout %>" style="display: none">
 
-    <div class="mb-3" style="display: block" id="heading">
-        <label for="heading" class="form-label">Überschrift</label>
-        <input type="input" name="title" value="<%= title %>" class="form-control" id="heading" aria-describedby="heading">
+    <div class="mb-3" id="heading">
+        <label for="heading" class="form-label"></label>
+        <input type="text" name="heading" class="form-control" aria-describedby="heading" value="<%= heading %>" />
     </div>
-    <div style="display: none" id="gallery">
-        <div class="mb-3">
-            <label for="foto1" class="form-label">Foto 1</label>
-            <input type="input" name="foto1" value="<%= title %>" class="form-control" id="foto1" aria-describedby="foto1">
-        </div>
-        <div class="mb-3">
-            <label for="foto2" class="form-label">Foto 2</label>
-            <input type="input" name="foto2" value="<%= title %>" class="form-control" id="foto2" aria-describedby="foto2">
-        </div>
-        <div class="mb-3">
-            <label for="foto3" class="form-label">Foto 3</label>
-            <input type="input" name="foto3" value="<%= title %>" class="form-control" id="foto3" aria-describedby="foto3">
-        </div>
+    <div id="fotosbox" class="mb-3" style="display: none">
+        <label for="fotos" class="form-label">Fotos</label>
+        <input type="file" name="multipleFiles" multiple="multiple" />
     </div>
-    <div style="display: block" id="textbox">
-        <div class="mb-3">
-            <label for="text" class="form-label">Text</label>
-            <textarea class="form-control" name="text" aria-label="With textarea" style="height: 20em;"><%= text %></textarea>
-        </div>
+    <div id="textbox" class="mb-3">
+        <label for="text" class="form-label"></label>
+        <textarea name="text" class="form-control" aria-label="text" ><%= text %></textarea>
     </div>
-    <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-    </div>
-    <button type="submit" class="btn btn-primary">Speichern</button>
-    <script>
-        const form = document.getElementById("formular")
-        function change(selectObject) {
-            if(selectObject.value == "gallery") {
-                document.getElementById("heading").style.display = "block"
-                document.getElementById("gallery").style.display = "block"
-                document.getElementById("textbox").style.display = "none"
-            } else {
-                document.getElementById("heading").style.display = "block"
-                document.getElementById("textbox").style.display = "block"
-                document.getElementById("gallery").style.display = "none"
-            }
-        }
-    </script>
-    </form>
+    <input type="submit" class="btn btn-primary" value="Upload" />
+  </form>
     </body>
 </html>
 <%- include('_footer'); -%>

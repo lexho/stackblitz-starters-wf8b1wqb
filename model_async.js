@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { writeFile, appendFile, promises } from 'fs';
+import { storeContent, storeNotes, getContent as getContentStorage, getNotes as getNotesStorage, writeToFile } from './storage_ram.js';
 
 let filename = "config/content.json"
 export function setFilename(name) {
@@ -24,17 +25,25 @@ async function getContentFromFile() {
     } 
 }
 
-let content
 async function store() {
     const data = await getContentFromFile();
-    content = JSON.parse(data)
+    storeContent(JSON.parse(data))
 }
 
 let firstTime = true
 /** load content, the first time from file then from RAM */
 export async function getContent() {
-    if(firstTime) { await store(); firstTime = false; return content; }
-    return content;
+    if(firstTime) {
+        const data = await getContentFromFile();
+        // verify content
+        let content = JSON.parse(data)
+        for(const page of content.pages) {
+            if(typeof page.path === "undefined") { throw new Error('content from file has errors.'); }
+        }
+        storeContent(JSON.parse(data))
+        firstTime = false;
+    }
+    return getContentStorage()
 }
 
 async function getNotesFromFile() {
@@ -46,17 +55,15 @@ async function getNotesFromFile() {
     }
 }
 
-let notes
-async function store1() {
-    const data = await getNotesFromFile();
-    notes = JSON.parse(data)
-}
-
 let firstTime1 = true
 /** load notes, the first time from file then from RAM */
 export async function getNotes() {
-    if(firstTime1) { await store1(); firstTime1 = false; return notes; }
-    return notes;
+    if(firstTime1) { 
+        const data = await getNotesFromFile();
+        storeNotes(JSON.parse(data))
+        firstTime1 = false; 
+    }
+    return getNotesStorage()
 }
 
 async function insert(page) {
@@ -75,20 +82,14 @@ async function insert(page) {
         if(layout == "gallery") {
             data = {"id": id,"layout": layout,"title": title,"path": path, "images": images}
         }
-            let content = [];
+            //let content = [];
             try {
-                content = await getContent();
-                content.pages.push(data)
-                const json = JSON.stringify(content)
-                writeFile(filename, json, err => {
-                    if (err) {
-                        console.error(err);
-                        reject();
-                    } else {
-                    // file written successfully
-                        resolve();
-                    }
-                });
+                //content = await getContent(); // schon da sein?
+                let content = await getContent()
+                content.pages.push(data) // store in RAM
+                storeContent(content)
+                writeToFile()
+                resolve();
             } catch(err) {
                 console.log(err)
                 content = {pages: []}
@@ -99,11 +100,12 @@ async function insert(page) {
 }
 
 async function update(page) {
+    let content
     const id = parseInt(page.id, 10);
     const index = id - 1;
-    let content = [];
+    //let content = [];
     try {
-        content = await getContent();
+        content = await getContent(); // schon da sein?
     } catch(err) {
         console.log(err)
         content = {pages: []}
@@ -111,14 +113,8 @@ async function update(page) {
     content.pages[index].title = page.title;
     content.pages[index].text = page.text;
     content.pages[index].id = id;
-    const json = JSON.stringify(content)
-    writeFile(filename, json, err => {
-        if (err) {
-          console.error(err);
-        } else {
-          // file written successfully
-        }
-    });
+    storeContent(content)
+    writeToFile()
     return Promise.resolve();
 }
 
@@ -137,17 +133,14 @@ export async function saveSettings(settings) {
         }
     }
     content.style = style;
+    storeContent(content)
     const json = JSON.stringify(content)
-    writeFile(filename, json, err => {
-        if (err) {
-          console.error(err);
-        } else {
-          // file written successfully
-        }
-    });
+    writeToFile()
 }
 
 export async function save(page) {
+    if(page.id == 0) console.log("insert page: ")
+    else console.log("updated page: ")
     if(page.id === 0) {
         await insert(page)
     } else {
