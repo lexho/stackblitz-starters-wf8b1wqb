@@ -129,7 +129,7 @@ async function loadContent() {
 
 /** setup get request handlers for pages */
 function setAppGetPages() {
-    console.log("set app pages")
+    //console.log("set app pages")
     //console.log(content.pages)
     for(let page of content.pages) {
         let route = page.path
