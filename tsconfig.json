@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "es2020",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}

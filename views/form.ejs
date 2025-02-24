@@ -1,4 +1,4 @@
-<%- include('_header'); -%>
+<%- include('_header'); %>
 <style>
     .form-select {
         max-width: 300px;
@@ -11,7 +11,7 @@
         height: 250px;
     }
 </style>
-<form action="/page/save" class="container" method="post">
+<form action="/page/save" class="container" method="post" enctype="multipart/form-data">
     <h2><%= title1 %></h2>
     <div class="mb-3">Layout: 
         <select class="form-select" name="layout" onchange="change(this)" aria-label="Layout select" >
@@ -25,7 +25,7 @@
     </div>
     <div id="fotosbox" class="mb-3" style="display: none;">
         <label for="fotos" class="form-label">Fotos</label>
-        <input type="file" name="multipleFiles" multiple="multiple" /></div>
+        <input type="file" name="photos" multiple="multiple" /></div>
     <div id="textbox" class="mb-3">
         <label for="text" class="form-label">Text</label>
         <textarea name="text" class="form-control" aria-label="text" ></textarea></div>
@@ -45,4 +45,4 @@
   </form>
     </body>
 </html>
-<%- include('_footer'); -%>
+<%- include('_footer'); %>

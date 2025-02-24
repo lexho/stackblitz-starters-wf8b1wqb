@@ -1,9 +1,9 @@
-<%- include('_header'); -%>
+<%- include('_header'); %>
 
 <main id="content" class="container-fluid">
     <div class="row align-items-start">
         <div class="col">
-            <h2><%= title %> <a href="/page/new/<%= id %>"><span class="badge text-bg-primary">edit<span></a></h2>
+            <h2><%= title %><%- include('_buttons'); %></h2>
             <text><p><%- text %></p></text>
             <style>
                 .foto { height: 300px; }
@@ -17,4 +17,4 @@
     </div>
 </main>
 
-<%- include('_footer'); -%>
+<%- include('_footer'); %>

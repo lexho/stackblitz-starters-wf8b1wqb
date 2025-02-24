@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { storeContent, storeNotes, getContent as getContentStorage, getNotes as getNotesStorage } from './storage_ram.js';
 
-export function getConfig() {
+export function loadConfig() {
     try {
         return readFileSync('./config/config.json', 'utf-8')
     } catch(err){

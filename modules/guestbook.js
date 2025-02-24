@@ -32,6 +32,6 @@ export class Guestbook {
         res.render('modules/guestbook', { cfg: cfg, title: title, id: id, text: text });
     }
     callback() {
-        console.log('source.txt was copied to destination.txt');
+        //console.log('source.txt was copied to destination.txt');
     }
 }

@@ -1,9 +1,10 @@
-<%- include('_header'); -%>
+<%- include('_header'); %>
 <style>
     img { width: 400px; height: 400px; }
     .image { width: 400px; height: 400px; margin-bottom: 1.0em; }
     #photobox { margin-top: 1.0em; }
 </style>
+<h2><%= title %><%- include('_buttons') %></h2>
 <div id="photobox" class="container-fluid">
     <% for(let image of images) { %><img src="images/<%= image.url %>" class="image img-fluid" alt="<%= image.alt %>">
     <% } %>
@@ -28,4 +29,4 @@
         <div style="background-image: url('images/einstein.jpg');"></div>
     </div>-->
 </div>
-<%- include('_footer'); -%>
+<%- include('_footer'); %>
