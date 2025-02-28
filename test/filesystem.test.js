@@ -23,7 +23,7 @@ describe('filesystem', () => {
         it('should exist and should be valid', async () => {
             let cfg1 = ""
             try {
-                cfg1 = JSON.parse(await getConfig()); // load config from config.json
+                cfg1 = await getConfig(); // load config from config.json
                 console.log(cfg1)
             } catch(err) {
                 console.log(err)

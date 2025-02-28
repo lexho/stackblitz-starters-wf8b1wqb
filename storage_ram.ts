@@ -1,6 +1,6 @@
 import { Content } from './content.js';
 import { Notes } from './notes.js';
-import { rename, unlink, writeFile } from 'node:fs/promises';
+import { rename, unlink, writeFile, access, constants } from 'node:fs/promises';
 
 let content: Content
 let notes: Notes // readonly
@@ -10,7 +10,7 @@ export function storeContent(c : Content) { //sync
     console.log("store content in RAM")
 
     // prüüüüüüüüüüüüüfen
-    if( (c instanceof Content) ) {
+    if( (c instanceof Content) ) { // unnötig? prüfen ob man's weglassen kann
         content = c
     } else {
         console.error("invalid")
@@ -99,7 +99,8 @@ export function setFilename(name: string) {
 }
 
 /** write everything to file */
-export async function writeToFile() { //async
+// export async function writeToFile(req: Request, res: Response, next: NextFunction) { //async
+/*export async function writeToFile() { //async
     storeContent(content) // sync
     
     const json = JSON.stringify(content)
@@ -112,5 +113,32 @@ export async function writeToFile() { //async
     } catch(error) {
         console.error(error)
         console.log("write to file failed!")
+        //next(error)
     }
+}*/
+
+/** write everything to file */
+// export async function writeToFile(req: Request, res: Response, next: NextFunction) { //async
+// pass errors to model
+export async function writeToFile() {
+    storeContent(content); // sync
+    const json = JSON.stringify(content);
+    console.log("write content to file");
+    //try {
+    let exists = false
+    try {
+        await access('config/content.json', constants.R_OK | constants.W_OK);
+        exists = true
+    } catch(err) {
+        console.error('cannot access config/content.json');
+    }
+    if(exists) await rename(filename, filenameLock); // lock file // async
+    await writeFile(filename, json); // write // async
+    if(exists) await unlink(filenameLock); // remove lock file //
+    console.log("written to file");
+    //} catch(error) {
+    //console.error(error)
+    //console.log("write to file failed!");
+    //next(error)
+    //}
 }

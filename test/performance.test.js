@@ -1,5 +1,6 @@
 import request from 'request';
 import { getContent } from '../model.js';
+import { start, stop } from '../webserver.js'
 
 const numberOfRequests = 10
 
@@ -49,9 +50,12 @@ function request11(limit, path) {
 
 
 describe('server', () => {
-    beforeEach(() => {
-        ////server.listen(8189, () => {})
+    beforeAll(() => {
+        start();
     });
+    afterAll(() => {
+        stop();
+    })
     describe('request \'/\'', () => {
         it('server should be running', async () => {
             setTimeout(async() => { expect(undefined).toBeDefined() }, 5000)
@@ -79,10 +83,14 @@ describe('server', () => {
         });
     });
 
-    let routes = ['/aboutme', '/myinstrument', '/samples', '/aboutthispage']
-    let route = '/aboutme'
+    let routes = ['/text1', '/text2', '/gall1', '/gall2']
     for(let route of routes) {
     describe('request '+ route, () => {
+        it('should respond in less than 4000ms', async () => {
+            setTimeout(async() => { expect(undefined).toBeDefined() }, 5000)
+            await asyncFunction2(4000, route);
+            //server.close()
+        });
         it('should respond in less than 1000ms', async () => {
             setTimeout(async() => { expect(undefined).toBeDefined() }, 2000)
             await asyncFunction2(1000, route);

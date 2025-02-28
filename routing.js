@@ -4,9 +4,10 @@ import ejs from 'ejs';
 
 import { loadConfig } from './model.js'
 import { getContent, loadContentFromFile, getNotes, loadNotesFromFile, getPageById } from './model_async.js';
-import { pageAction, saveAction, saveSettingsAction, formAction, deleteAction } from './controller.js';
+import { pageAction, saveAction, saveSettingsAction, formAction, deleteAction, setupAction } from './controller.js';
 
 import { Guestbook } from './modules/guestbook.js'
+import { access, constants } from 'node:fs/promises';
 
 export let cfg = {
     "websitetitle": "",
@@ -39,7 +40,8 @@ try {
 export function getPageConfig() {
     const cfg_page = {}
     cfg_page.routes = cfg.routes
-    cfg_page.websitetitle = cfg.websitetitle
+    let content = getContent()
+    cfg_page.websitetitle = content.websitetitle
     cfg_page.style = cfg.style
     return cfg_page
 }
@@ -115,21 +117,44 @@ export async function setAppGetPages1(router, content, getPageById, pageAction, 
  * page/new, page/save, page/delete, /settings
 */
 function setAppGet() {
-    router.get('/', async (req,res)=>{
-        const page_cfg = getPageConfig()
-        if(cfg.build == "debug") {
-            let notes = await getNotes()
-            let todo = []
-            let issues = []
-            todo = notes.todolist;
-            issues = notes.issues;
-            page_cfg.todo = todo;
-            page_cfg.issues = issues;
+    router.get('/', async(req,res) => {
+        // content
+        //let content = getContent()
+        //content.websitetitle
+        // keine content.json?
+        // keine config?
+        let firsttime = false;
+        try {
+            await access('config/content.json', constants.R_OK | constants.W_OK);
+        } catch(error) {
+            // config/content.json does not exist
+            firsttime = true
         }
-        //TODO cfg soll hier vielleicht gar nich verfügbar sein
-        res.render('home', { cfg: page_cfg, websitetitle: page_cfg.websitetitle, text: "" })
-        //res.end("home")
-    });
+        if(firsttime) {
+            const page_cfg = getPageConfig()
+            res.render('setup', { title: "Website Setup", cfg: page_cfg})
+        } else {
+            const page_cfg = getPageConfig()
+            if(cfg.build == "debug") {
+                let notes = getNotes()
+                let todo = []
+                let issues = []
+                todo = notes.todolist;
+                issues = notes.issues;
+                page_cfg.todo = todo;
+                page_cfg.issues = issues;
+            }
+            //TODO cfg soll hier vielleicht gar nich verfügbar sein
+            res.render('home', { cfg: page_cfg, websitetitle: page_cfg.websitetitle, text: "" })
+            //res.end("home")
+        }
+    })
+    router.get('/setup', (req,res) => {
+        const page_cfg = getPageConfig()
+        res.render('setup', { title: "Website Setup", cfg: page_cfg})
+    })
+    const upload1 = multer({ dest: 'uploads/' }).single('avatar')
+    router.post('/setup/save', upload1, setupAction)
     router.get('/page/new/:path?', (req, res) => { 
         req.cfg = getPageConfig();
         formAction(req, res)
@@ -164,9 +189,16 @@ function setAppGet() {
                 return cb(err);
             }
         },
-    }).array('photos', 12)
+    }).array('photos', 50) //.single('image')
+
     //router.post('/page/save', saveAction)
-    router.post('/page/save', upload, saveAction) 
+    router.post('/page/save', (req, res, next) => { 
+        console.log(req.file); 
+        console.log(req.image);
+        console.log(req.body); 
+        console.log(req.body.data)
+        upload(req, res, next); 
+    }, saveAction) 
 }
 
 //getContentFromFileSync()

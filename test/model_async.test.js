@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { getContent, getNotesFromFile, getConfig, save, storeContentFromFile } from '../model_async.js';
+import { getContent, getConfig, save, loadContentFromFile, loadNotesFromFile, getNotes } from '../model_async.js';
 import { TextWithTitle } from '../content.js'
 import { getContent as getContentStorage, storeContent, setFilename } from '../storage_ram.js'
 import { Content } from '../content.js';
@@ -10,29 +10,31 @@ describe('model', () => {
         it('should return websitetitle', async () => {
             const filename = 'config/content.json'
             //setFilename(filename)
-            await storeContentFromFile();
+            await loadContentFromFile();
             let content = getContent()
             expect(content.websitetitle).toBe("Alexander's Seite");
         });
     });
 
-    describe('getConfig().loadOnTheFly', () => {
+    describe('getConfig()', () => {
         it('should exist', async () => {
-            const config = JSON.parse(await getConfig());
+            const config = await getConfig();
             expect(typeof(config)).toBe("object")
         });
     });
 
     describe('in editor\s notes: todolist', () => {
         it('should exist', async () => {
-            const todo = (await getNotesFromFile()).todolist;
+            await loadNotesFromFile()
+            const todo = getNotes().todolist;
             expect(typeof(todo)).toBe("object");
         });
     });
 
     describe('in editor\s notes: issues', () => {
         it('should exist', async () => {
-            const issues = (await getNotesFromFile()).issues;
+            await loadNotesFromFile()
+            const issues = getNotes().issues;
             expect(typeof(issues)).toBe("object");
         });
     });

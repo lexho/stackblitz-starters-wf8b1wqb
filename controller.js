@@ -1,7 +1,8 @@
-import { copyFile, unlinkSync } from 'fs';
+import { unlinkSync } from 'fs';
+import { copyFile } from 'node:fs/promises';
 import sharp from 'sharp';
-import { replaceUmlaute } from './utility.js';
-import { getContent, save, deletePage, getPageByPath, saveSettings } from './model_async.js';
+import { replaceUmlaute } from './public/js/utility.js';
+import { getContent, save, deletePage, getPageByPath, saveSettings, saveSetup } from './model_async.js';
 import { setAppGetPages } from './routing.js';
 //import { removeRoute1 } from './webserver.js';
 
@@ -10,86 +11,92 @@ import { setAppGetPages } from './routing.js';
  * @param {Object} req - request which contains page and config data
  * @param {Object} res - rendered response of the webserver
  */
-export async function pageAction(req, res) {
-    if(req.page === undefined) { 
-        res.send("Error 404. page not found.");
+export async function pageAction(req, res, next) {
+    /*if(req.page === undefined) { // extrahiert
+        res.send("Error 404. page not found."); // TODO !!!
         return 
-    }
-    const page = req.page
-    const cfg = req.cfg
+    }*/
+    try {
+        const page = req.page // extract
+        const cfg = req.cfg // extract
 
-    // usin path instead of id
-    const path = page.path
-    const layout = page.layout;
-    const title = page.title;
-    const text = page.text;
-    const images = page.images;
-    
-    // View with content
-    if(layout == "text-with-title")
-        res.render('text-with-title', { cfg: cfg, title: title, path: path, text: text })
-    else if(layout == "gallery")
-        res.render('gallery', { cfg: cfg, title: title, path: path, images: images })
-    else if(layout == "text-with-gallery")
-        res.render('text-with-gallery', { cfg: cfg, title: title, path: path, text: text, images: images})
-    
-    else
-        res.render('index', { cfg: cfg, title: title, path: path, text: text})
+        // usin path instead of id
+        const path = page.path // extract
+        const layout = page.layout; // extract
+        const title = page.title; // extract
+        const text = page.text; // extract
+        const images = page.images; // extract
+        
+        // View with content
+        if(layout == "text-with-title")
+            res.render('text-with-title', { cfg: cfg, title: title, path: path, text: text })
+        else if(layout == "gallery")
+            res.render('gallery', { cfg: cfg, title: title, path: path, images: images })
+        else if(layout == "text-with-gallery")
+            res.render('text-with-gallery', { cfg: cfg, title: title, path: path, text: text, images: images})
+        
+        else
+            res.render('index', { cfg: cfg, title: title, path: path, text: text})
+    } catch(err) {
+        next(err);
+    }
 }
 
 /** 
- * generates new page or edit
- * sends page data to a form to be editable
- * or sends a empty form for a new page
+ * generates new page or edit;
+ * @param {Object} req - request with params contain page path
+ * @param {Object} res - response sends page data to a form to be editable or sends a empty form for a new page
  */
-export async function formAction(request, response) {
-    return formAction1(request, response, getPageByPath)
+export async function formAction(req, res, next) {
+    return formAction1(req, res, getPageByPath, next)
 }
 
-export async function formAction1(request, response, getPageByPath) {
-    let page = { id: '', title: '', text: '' }
-    const cfg = request.cfg
-    console.log("id: " + request.params.id)
-    console.log("path: " + request.params.path)
-    const path = request.params.path
-    console.log("path: " + path)
-    if(!(path === undefined)) { // edit
+export async function formAction1(req, res, getPageByPath, next) {
+    const cfg = req.cfg
+    try {
+        if(req.params.path === undefined) throw new Error("no path error") // path does not exist yet --> new page
+        const path = req.params.path
         console.log("edit")
         console.log("path: " + path)
+        let page = { id: '', title: '', text: '' }
         page = getPageByPath("/" + path) // TODO remove "/"
         //console.log("page: " + JSON.stringify(page))
-        if(page === undefined) { response.end("Error. Page not found."); return; }
+        if(page === undefined) { 
+            throw new Error("Error. Page not found.") // path is wrong --> new page?
+            //response.end("Error. Page not found."); return; 
+        }
         const id = page.id
 
         //const path = page.path;
         const layout = page.layout;
         const title = page.title;
         const text = page.text;
-        response.render('edit', { cfg: cfg, title: title, id: id, path: path, layout: layout, heading: title, text: text })
-    } else { // new
+        res.render('edit', { cfg: cfg, title: title, id: id, path: path, layout: layout, heading: title, text: text })
+    } catch(err) {
         console.log("new")
+        // TODO prüfen
         const id = 0;
         const path = "";
         const layout = "";
+        const title1 = "Neue Seite";
         const title = "";
         const text = "";
-        response.render('form', { cfg: cfg, title1: "Neue Seite", id: id, path: path, layout: layout, title: title, text: text })
+        res.render('form', { cfg: cfg, title1: title1, id: id, path: path, layout: layout, title: title, text: text })
+        //next(err);
     }
 }
 
 /** 
  * deletes a page 
- * and reloads the page
  * @param {Object} req - request which contains page id
+ * @param {Object} res - response reloads the page
 */
 export async function deleteAction(req, res) {
     console.log("delete")
-    let page = getPageByPath("/" + req.params.id)
-    let route = page.path
     //removeRoute1(route) // remove page route from express stack
     await deletePage(req.params.id)
     //res.end("page " + req.params.id + "deleted.")
-    console.log("id: " + req.params.id)
+
     res.redirect("/");
 }
 
@@ -99,90 +106,115 @@ function contains(content, route) {
     }
 }
 
-     // Duplikate vermeiden
-    // wenn neue seite == bestehender eintrag
-    export function uniquePath(content, path) {
-        let route = path
-        while(contains(content, route)) {
-            console.log("routing table already contains route: " + route)
-            //removeRoute(app, route);
-            route += 1
-            console.log("+1")
-        }
-        //routingTable.push({route: route, page: page})
-        return route;
+// Duplikate vermeiden
+// wenn neue seite == bestehender eintrag
+export function uniquePath(content, path) {
+    let route = path
+    while(contains(content, route)) {
+        console.log("routing table already contains route: " + route)
+        //removeRoute(app, route);
+        route += 1
+        console.log("+1")
     }
+    //routingTable.push({route: route, page: page})
+    return route;
+}
 
 /** saves page to file 
- * @param {Object} request contains the page
- * @param {Object} response redirects to home
+ * @param {Object} req - request contains the page
+ * @param {Object} res - response redirects to home
  * handle image upload
 */
-export async function saveAction(request, response) {
+export async function saveAction(req, res, next) {
     console.log("saveAction")
+    console.log(req.body.id);
+    console.log(req.body.heading)
+    console.log(req.body.layout)
+    console.log(req.body.text)
     // req.file
     // req.files
     // req.body will hold the text fields, if there were any
-
-    const UPLOAD_PATH = '/uploads' //path.join(__dirname, '/uploads');
     const images = [];
-    if(Array.isArray(request.files)) {
+    if(Array.isArray(req.files)) {
         // TODO verify content
-        for(const file of request.files) {
+        for(const file of req.files) {
             try {
-                
-                //const newFilePath = path.join(UPLOAD_PATH, uuid() + '_' +
-                //file.originalname);
-                // save newFilePath in your db as image path
-                await sharp(file.path).resize().jpeg({ quality: 50 
+                /*await sharp(file.path).resize().jpeg({ quality: 50 
                         }).toFile("public/images/" + file.originalname);
                 unlinkSync(file.path);
-
-                /*copyFile(file.path, "public/images/" + file.originalname, (err) => {
-                    if (err) {
-                        console.log("Error Found:", err);
-                    }
-                });*/
-                images.push({url: file.originalname, alt: ""})
+                images.push({url: file.originalname, alt: ""})*/
+                // image compression is now client-seitig
+                // generate a hash for filename
+                // generate a unique filename
+                // date based
+                let currentDate = new Date(); let timestamp = currentDate. getTime();
+                const filename = timestamp + ".jpg"
+                await copyFile(file.path, "public/images/" + filename);
+                images.push({url:  filename, alt: ""})
             } catch(error) {
-                console.log(error) // do not create black holes, it's hard to get out of them
+                //console.log(error) // do not create black holes, it's hard to get out of them
+                next(error);
             }
         }
     } else {
         try {
-            copyFile(request.file.path, "public/images/" + request.file.originalname, (err) => {
-                if (err) {
-                    console.log("Error Found:", err);
-                }
-            });
-            images.push({url:  request.file.originalname, alt: ""})
+            let file = req.file // extract
+            const filename = file.originalname + ".jpg"
+            await copyFile(file.path, "public/images/" + filename);
+            images.push({url:  filename, alt: ""})
         } catch(error) {
             console.log(error)
+            next(error)
         }
     }
 
     let id
-    if(request.body.id === undefined) id = 0;
-    else id = request.body.id;
+    if(req.body.id === undefined) id = 0;
+    else id = req.body.id;
+    const heading = req.body.heading
+    const layout = req.body.layout
+    const text = req.body.text
     const page = {
-        layout: request.body.layout,
-        title: request.body.heading,
+        id: id,
+        layout: layout,
+        title: heading,
         images: images,
-        text: request.body.text,
-        path: "/" + replaceUmlaute(request.body.heading.toLowerCase().replaceAll(" ", "")) // Duplikate möglich
+        text: text,
+        path: "/" + replaceUmlaute(heading.toLowerCase().replaceAll(" ", "")) // Duplikate möglich
     };
 
-    page.id = id
     if(page.id == 0) {
         page.path = uniquePath(getContent(), page.path)
     }
 
+    console.log("page: " + JSON.stringify(page))
+    //console.log("page: " + page.toString()) // funktioniert nicht
+
+    try {
     await save(page)
     await setAppGetPages(); 
-    
-    // routes neu bauen
-    
-    response.redirect(page.path);
+    console.log("saved")
+    res.redirect(page.path);
+    } catch(error) {
+        //console.error(error)
+        next(error)
+    }
+}
+
+/** setup website
+ *  @param {Object} req - request with a websitetitle and an image 
+*/
+export async function setupAction(req, res, next) {
+    console.log("setup action")
+    let websitetitle = req.body.websitetitle // extrahiert
+    let file = req.file // extrahiert
+    try {
+        await saveSetup(websitetitle, file) // errors --> pass errors to error handler via next
+        res.redirect("/"); // to "home" page
+    } catch(error) {
+        // no file error, no website title error,...
+        next(error); // pass errors to error handler via next
+    }
 }
 
 /** saves the settings */

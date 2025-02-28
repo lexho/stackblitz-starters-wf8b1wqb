@@ -4,18 +4,7 @@
     <head>
         <title><%= cfg.websitetitle %></title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <% if(cfg.style == "bootstrap") { 
-        %><link href="/css/bootstrap.css" rel="stylesheet"><% 
-        } 
-        if(cfg.style == "stylecss") { 
-        %><link href="/css/bootstrap.css" rel="stylesheet">
-        <link href="/css/style.css" rel="stylesheet"><% 
-        } %>
-        <% if(cfg.style == "style2css") { 
-          %><link href="/css/bootstrap.css" rel="stylesheet">
-          <link href="/css/style.css" rel="stylesheet">
-          <link href="/css/style2.css" rel="stylesheet"><% 
-        } %>
+        <%- include('_style'); -%>
     </head>
     <body>
         <header class="d-flex background-transp">

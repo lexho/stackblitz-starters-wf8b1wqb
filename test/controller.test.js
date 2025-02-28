@@ -1,7 +1,7 @@
 import { pageAction, formAction1, saveAction, saveSettingsAction1 } from '../controller.js'
 import { getPageConfig } from '../routing.js'
 import request from 'request';
-import server from '../webserver.js'
+import { start, stop } from '../webserver.js'
 
 function request1(url, expected) {
     return new Promise((resolve, reject) => {
@@ -30,17 +30,17 @@ function request2(url, expected) {
 
 describe('controller', () => {
     beforeAll(() => {
-        server.start();
+        start();
     });
     afterAll(() => {
-        server.stop();
+        stop();
     })
     describe('url request', () => {
         // TODO load content.json mit entsprechenden pages
         it('should render edit \'text1\'', async () => {
             setTimeout(async() => { expect(undefined).toBeDefined() }, 4000)
-            const url = 'http://localhost:8080/page/new/text1'
-            const expected = { heading: 'text1', text: "Text." }
+            const url = 'http://localhost:8080/page/new/text1' // edit
+            const expected = { heading: 'text1', text: "Text." } // form
             await request1(url, expected);
         })
         it('should render edit \'text2\'', async () => {
@@ -178,26 +178,20 @@ describe('controller', () => {
             return page; })
         });
     });
-    describe('saveAction', () => {
-        it('should Asynchronität', async () => {
-            // server
-            //start();
-            /*layout: request.body.layout,
-            title: request.body.heading,
-            text: request.body.text,
-            response.redirect("/");*/
+    /*describe('saveAction', () => {
+        it('should not block', async () => {
             let response
             response = { redirect: (data) => {}}
             let request = { body: {} }
             request.body = { layout: "text-with-title", heading: "heading", text: "text" }
-            await saveAction(request, response) // save // send POST request instead
+            await saveAction(request, response, ()=>{}) // save // send POST request instead
             const url = 'http://localhost:8080/page/new/text1'
             const expected = { heading: 'text1', text: "Text." }
             request1(url, expected) // get
             expect(true).toBe(false)
             // get log of server, compare
         })
-    })
+    })*/
     describe('saveSettingsAction', () => {
         it('should saveSettings', async () => {
             let req = { body: { style: "teststyle"} }

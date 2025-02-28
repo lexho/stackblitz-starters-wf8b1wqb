@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <%- include('_style'); -%>
+    </head>
+<style>
+    .form-select {
+        max-width: 300px;
+    }
+    input {
+        max-width: 300px;
+    }
+    textarea {
+        max-width: 600px;
+        height: 250px;
+    }
+</style>
+<form action="/setup/save" class="container" method="post" enctype="multipart/form-data">
+    <h2><%= title %></h2>
+    <div class="mb-3" id="name1">
+        <label for="name" class="form-label">Vorname</label>
+        <input id="name" onchange="change()" type="text" name="name" class="form-control" aria-describedby="name" value="Tester" /></div>
+    </div>
+    <div class="mb-3" id="heading">
+        <label for="heading" class="form-label">Website Titel</label>
+        <input id="pagename" type="text" name="websitetitle" class="form-control" aria-describedby="websitetitle" value="Tester's Seite" /></div>
+    </div>
+    <div id="fotosbox" class="mb-3">
+        <label for="fotos" class="form-label">Foto</label>
+        <input type="file" name="avatar" />
+    </div>
+    <input type="submit" class="btn btn-primary" value="Upload" />
+    <script>
+        function change() {
+            console.log("change")
+            let n = document.getElementById("name")
+            let p = document.getElementById("pagename")
+            p.value = n.value + "'s Seite"
+        }
+    </script>
+  </form>
+    </body>
+</html>

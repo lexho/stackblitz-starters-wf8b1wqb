@@ -3,10 +3,12 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import morgan from 'morgan';
 import removeRoute from 'express-remove-route'; // phantom pages
+import cors from 'cors';
 
 import { router, getPageConfig } from './routing.js';
 import { writeToFile } from './storage_ram.js';
 import ejs from 'ejs';
+import { getConfig } from './model_async.js'
 
 let app;
 export function start() {
@@ -21,29 +23,26 @@ app.use(morgan('common', { immediate: true }));
 
 app.use(express.urlencoded({ extended: false }));
 
+app.use(cors())
+
 app.use('/', router); // (req, res, next) => { next() }
 
 app.use((req, res, next) => {
-    const file = "views/error.ejs"
     const cfg = getPageConfig() // page config
-    const params = { title: "Error 404", message: "Seite nicht gefunden.", cfg: cfg }
-    ejs.renderFile(file, params, (err, html) => {
-        res.status(404).send(html)
-    });
+    res.render('error', {  title: "Error 404", message: "Seite nicht gefunden.", stacktrace: "", cfg: cfg })
     //res.status(404).send('Sorry cant find that!')
-    //next() // ?
 })
-app.use((err, req, res, next) => {
+app.use(async(err, req, res, next) => {
+    console.error(err.code)
+    console.error(err.message)
     console.error(err.stack)
-    const file = "views/error.ejs"
+    let message = "Internal Server Error."
+    let stack = ""
+    const cfg1 = await getConfig()
+    if(cfg1.build == "debug") stack = err.stack;
     const cfg = getPageConfig()
-    const params = { title: "Error 500", message: "Internal Server Error.", cfg: cfg }
-    ejs.renderFile(file, params, (err, html) => {
-        res.status(500).send(html)
-    });
-    //console.error(err.stack)
+    res.render('error', { title: "Error 500", message: message, stacktrace: stack, cfg: cfg } )
     //res.status(500).send('Something broke!')
-    //next() // ?
 })
 }
 

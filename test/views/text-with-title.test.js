@@ -7,7 +7,7 @@ describe('view', () => {
         todo: [], issues: []
         }, 
         title: "title", 
-        id: 0, 
+        path: "/path", 
         text: "text",
         images: [{url: "", alt: ""}]
     }

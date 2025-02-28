@@ -2,13 +2,14 @@ import ejs from 'ejs';
 
 describe('view', () => {
     //res.render('gallery', { cfg: cfg, title: title, id: id, images: images })
+    //{ cfg: cfg, title: title, path: path, images: images }
     const params = {
         cfg:  { build: "debug", version: "0.0", websitetitle: "test site",
             routes: [{ "path": "/", "label": "home"}, { "path": "/route1", "label": "Route 1"}, { "path": "/route2", "label": "Route 2"}],
         todo: [], issues: []
         }, 
         title: "title", 
-        id: 0, 
+        path: "/path", 
         images: [{url: "", alt: ""}]
     }
     const filename = "gallery";
