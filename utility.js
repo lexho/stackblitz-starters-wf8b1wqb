@@ -18,3 +18,6 @@ export function replaceUmlaute(str) {
       (a) => umlautMap[a]
     );
 }
+
+//const test = ['Übung', 'ÜBUNG', 'üben', 'einüben', 'EINÜBEN', 'Öde ätzende scheiß Übung']
+//test.forEach((str) => console.log(str + " -> " + replaceUmlaute(str)))

@@ -1,7 +1,6 @@
-import { unlinkSync } from 'fs';
-import { copyFile } from 'node:fs/promises';
+import { copyFile, unlinkSync } from 'fs';
 import sharp from 'sharp';
-import { replaceUmlaute } from './public/js/utility.js';
+import { replaceUmlaute } from './utility.js';
 import { getContent, save, deletePage, getPageByPath, saveSettings, saveSetup } from './model_async.js';
 import { setAppGetPages } from './routing.js';
 //import { removeRoute1 } from './webserver.js';
@@ -11,11 +10,7 @@ import { setAppGetPages } from './routing.js';
  * @param {Object} req - request which contains page and config data
  * @param {Object} res - rendered response of the webserver
  */
-export async function pageAction(req, res, next) {
-    /*if(req.page === undefined) { // extrahiert
-        res.send("Error 404. page not found."); // TODO !!!
-        return 
-    }*/
+export async function pageAction({ req, res, next }) {
     try {
         const page = req.page // extract
         const cfg = req.cfg // extract
@@ -127,10 +122,6 @@ export function uniquePath(content, path) {
 */
 export async function saveAction(req, res, next) {
     console.log("saveAction")
-    console.log(req.body.id);
-    console.log(req.body.heading)
-    console.log(req.body.layout)
-    console.log(req.body.text)
     // req.file
     // req.files
     // req.body will hold the text fields, if there were any
@@ -139,18 +130,10 @@ export async function saveAction(req, res, next) {
         // TODO verify content
         for(const file of req.files) {
             try {
-                /*await sharp(file.path).resize().jpeg({ quality: 50 
+                await sharp(file.path).resize().jpeg({ quality: 50 
                         }).toFile("public/images/" + file.originalname);
                 unlinkSync(file.path);
-                images.push({url: file.originalname, alt: ""})*/
-                // image compression is now client-seitig
-                // generate a hash for filename
-                // generate a unique filename
-                // date based
-                let currentDate = new Date(); let timestamp = currentDate. getTime();
-                const filename = timestamp + ".jpg"
-                await copyFile(file.path, "public/images/" + filename);
-                images.push({url:  filename, alt: ""})
+                images.push({url: file.originalname, alt: ""})
             } catch(error) {
                 //console.log(error) // do not create black holes, it's hard to get out of them
                 next(error);
@@ -159,11 +142,9 @@ export async function saveAction(req, res, next) {
     } else {
         try {
             let file = req.file // extract
-            const filename = file.originalname + ".jpg"
-            await copyFile(file.path, "public/images/" + filename);
-            images.push({url:  filename, alt: ""})
+            copyFile(file.path, "public/images/" + file.originalname);
+            images.push({url:  file.originalname, alt: ""})
         } catch(error) {
-            console.log(error)
             next(error)
         }
     }
@@ -187,13 +168,9 @@ export async function saveAction(req, res, next) {
         page.path = uniquePath(getContent(), page.path)
     }
 
-    console.log("page: " + JSON.stringify(page))
-    //console.log("page: " + page.toString()) // funktioniert nicht
-
     try {
     await save(page)
     await setAppGetPages(); 
-    console.log("saved")
     res.redirect(page.path);
     } catch(error) {
         //console.error(error)

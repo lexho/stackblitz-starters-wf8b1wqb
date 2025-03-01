@@ -1,7 +1,21 @@
 {
-    "websitetitle": "Alexander's Seite",
-    "version": "0.10",
-    "build": "debug",
-    "loadOnTheFly": true,
-    "enableModules": true
+  "websitetitle": "Alexander's Seite",
+  "page": "mypage",
+  "style": "stylecss",
+  "pages": [
+    {
+      "id": 3,
+      "layout": "text-with-title",
+      "title": "text1",
+      "path": "/text1",
+      "text": "Text."
+    },
+    {
+      "id": 4,
+      "layout": "text-with-title",
+      "title": "text2",
+      "path": "/text2",
+      "text": "Text."
+    }
+  ]
 }

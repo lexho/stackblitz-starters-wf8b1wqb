@@ -189,16 +189,9 @@ function setAppGet() {
                 return cb(err);
             }
         },
-    }).array('photos', 50) //.single('image')
-
+    }).array('photos', 50)
     //router.post('/page/save', saveAction)
-    router.post('/page/save', (req, res, next) => { 
-        console.log(req.file); 
-        console.log(req.image);
-        console.log(req.body); 
-        console.log(req.body.data)
-        upload(req, res, next); 
-    }, saveAction) 
+    router.post('/page/save', upload, saveAction) 
 }
 
 //getContentFromFileSync()

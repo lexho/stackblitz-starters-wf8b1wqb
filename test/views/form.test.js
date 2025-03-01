@@ -70,14 +70,7 @@ describe('view', () => {
         });
         it('should render ' + filename + ' view form', () => {
             ejs.renderFile(filepath, params, (err, data) => {
-                //expect(data).toContain('<div action="/page/save" class="container" method="post"')
-                expect(data.toLowerCase()).toContain("post")
-            });
-        });
-        it('should render ' + filename + ' view form', () => {
-            ejs.renderFile(filepath, params, (err, data) => {
-                //expect(data).toContain("method: 'POST'").or.toContain('method="post"')
-                expect(data.includes("method: 'POST'") || data.includes('method="post"')).toBeTruthy()
+                expect(data).toContain('<form action="/page/save" class="container" method="post"')
             });
         });
         

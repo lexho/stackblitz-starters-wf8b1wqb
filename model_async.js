@@ -2,8 +2,8 @@ import { readFile, copyFile } from 'node:fs/promises';
 import { storeContent, storeNotes, getContent as getContentStorage, getNotes as getNotesStorage, writeToFile,
     getPageById as getPageByIdStorage, deletePageByPath, getPageByPath as getPageByPathStorage } from './storage_ram.js';
 import { Content } from './content.js';
-import { setAppGetPages, setStyle } from './routing.js';
-import { cfg } from './routing.js'
+import { setAppGetPages, setStyle } from './webserver.js';
+import { cfg } from './webserver.js'
 
 export async function getConfig() {
     const data1 = await readFile('./config/config.json', 'utf-8')
