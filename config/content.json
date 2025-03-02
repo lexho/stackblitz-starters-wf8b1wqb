@@ -1,1 +1,1 @@
-{"websitetitle":"Alexander's Seite","page":"mypage","style":"stylecss","pages":[{"id":1,"layout":"text-with-title","title":"text1","path":"/text1","text":"Text."},{"id":2,"layout":"text-with-title","title":"text2","path":"/text2","text":"Text."}]}
+{"websitetitle":"Alexander's Seite","page":"mypage","style":"stylecss","pages":[{"id":1,"layout":"text-with-title","title":"text1","path":"/text1","text":"Ein netter kleiner Text."},{"id":2,"layout":"text-with-title","title":"text2","path":"/text2","text":"Ein zweiter netter kleiner Text."}]}

@@ -3,7 +3,7 @@ import { storeContent, storeNotes, getContent as getContentStorage, getNotes as 
     getPageById as getPageByIdStorage, deletePageByPath, getPageByPath as getPageByPathStorage } from './storage_ram.js';
 import { Content } from './content.js';
 import { setAppGetPages } from './routing.js';
-import { setWebsiteTitle } from './routing.js'
+import { setWebsiteTitle } from './config.js'
 
 export async function getConfig() {
     const data1 = await readFile('./config/config.json', 'utf-8')
@@ -57,14 +57,12 @@ async function insert(page) {
     console.log("insert")
 
     page.id = getNextId(); // sync
-    console.log("page.id: " + page.id)
     const path = page.path;
     const id = page.id
     const layout = page.layout
     const title = page.title
     const text = page.text
     const images = page.images;
-    console.log(JSON.stringify(page))
     console.log(JSON.stringify(page))
     let data = {} // empty
     if(layout == "text-with-title") {
@@ -156,8 +154,6 @@ export async function saveSetup(websitetitle, file) { // kein next oder error?
         let content1 = new Content(content)
         content1.websitetitle = websitetitle
         storeContent(content1) // pass errors to controller
-        setWebsiteTitle(websitetitle)
-        //cfg.websitetitle = websitetitle
         setWebsiteTitle(websitetitle)
         //cfg.websitetitle = websitetitle
     } else {

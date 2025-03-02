@@ -1,8 +1,7 @@
-import { unlinkSync } from 'fs';
 import { copyFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { replaceUmlaute } from './public/js/utility.js';
-import { getContent, save, deletePage, getPageByPath, saveSettings, saveSetup } from './model_async.js';
+import { getContent, save, deletePage, getPageById, getPageByPath, saveSettings, saveSetup } from './model_async.js';
 import { setAppGetPages } from './routing.js';
 //import { removeRoute1 } from './webserver.js';
 import { TextWithTitle, Gallery, Index, TextWithGallery } from './page.js';
@@ -14,12 +13,20 @@ import { EditPage, FormPage } from './page.js'
  * @param {Object} res - rendered response of the webserver
  */
 export async function pageAction(req, res, next) {
+    let page1
+    let path
     try {
-        const page1 = req.page 
+        const id = req.id
+        page1 = getPageById(id)
 
         // usin path instead of id
-        const path = page1.path 
-        const layout = page1.layout; 
+        path = page1.path 
+    } catch(error) {
+        console.log("page not found")
+        next()
+    }
+    try {
+        const layout = page1.layout;
 
         //(websitetitle, routes, style)
         
@@ -69,7 +76,6 @@ export async function formAction1(req, res, getPageByPath, next) {
     try {
         if(req.params.path === undefined) throw new Error("no path error") // path does not exist yet --> new page
         const path = req.params.path
-        console.log("edit")
         console.log("path: " + path)
         let page = { id: '', title: '', text: '' }
         page = getPageByPath("/" + path) // TODO remove "/"
@@ -88,7 +94,6 @@ export async function formAction1(req, res, getPageByPath, next) {
         //res.render('edit', { cfg: cfg, title: title, id: id, path: path, layout: layout, heading: title, text: text })
         page1.render(res)
     } catch(err) {
-        console.log("new")
         const id = 0;
         const path = "";
         const layout = "";

@@ -7,8 +7,6 @@ let notes: Notes // readonly
 
 /** store content in RAM */
 export function storeContent(c : Content) { //sync
-    console.log("store content in RAM")
-
     // prüüüüüüüüüüüüüfen
     if( (c instanceof Content) ) { // unnötig? prüfen ob man's weglassen kann
         content = c
@@ -44,9 +42,7 @@ export function deletePageById(id: number) {
     for(let index = 0; index < content.pages.length; index++) {
         const page = content.pages[index]
         if(page !== undefined) {
-            //console.log(JSON.stringify(content.pages))
             if(page.id == id) content.pages.splice(index, 1)
-            //console.log(JSON.stringify(content.pages))
         } else {
             console.error("page delete undefined")
         }
@@ -77,7 +73,6 @@ export function deletePageByPath(path: string) {
 
 /** store Notes in RAM */
 export function storeNotes(n: Notes) { //sync
-    console.log("store notes in RAM")
     // TODO prüüüüüüüüüüüüüfen
     notes = n // should be object already
     //console.log("store notes " +  JSON.stringify(notes)) //ok
@@ -100,25 +95,6 @@ export function setFilename(name: string) {
 
 /** write everything to file */
 // export async function writeToFile(req: Request, res: Response, next: NextFunction) { //async
-/*export async function writeToFile() { //async
-    storeContent(content) // sync
-    
-    const json = JSON.stringify(content)
-    console.log("write content to file")
-    try {
-        await rename(filename, filenameLock) // lock file // async
-        await writeFile(filename, json) // write // async
-        await unlink(filenameLock) // remove lock file //
-        console.log("written to file")
-    } catch(error) {
-        console.error(error)
-        console.log("write to file failed!")
-        //next(error)
-    }
-}*/
-
-/** write everything to file */
-// export async function writeToFile(req: Request, res: Response, next: NextFunction) { //async
 // pass errors to model
 export async function writeToFile() {
     storeContent(content); // sync
@@ -136,9 +112,4 @@ export async function writeToFile() {
     await writeFile(filename, json); // write // async
     if(exists) await unlink(filenameLock); // remove lock file //
     console.log("written to file");
-    //} catch(error) {
-    //console.error(error)
-    //console.log("write to file failed!");
-    //next(error)
-    //}
 }

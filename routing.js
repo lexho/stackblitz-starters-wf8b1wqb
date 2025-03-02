@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import ejs from 'ejs';
 
-import { loadConfig } from './model.js'
 import { getContent, loadContentFromFile, getNotes, loadNotesFromFile, getPageById } from './model_async.js';
 import { pageAction, saveAction, saveSettingsAction, formAction, deleteAction, setupAction } from './controller.js';
 
@@ -10,85 +8,24 @@ import { Guestbook } from './modules/guestbook.js'
 import { access, constants } from 'node:fs/promises';
 
 import { HomePage, SetupPage, SettingsPage } from './page.js';
-//import { config } from 'node:process';
+import { loadConfig1, print, modulesEnabled, isDebug, getPageConfig } from './config.js'
+//import config from './config.js'
 
-class Config {
-
-    websitetitle
-    version
-    build
-    loadOnTheFly // deprecated
-    enableModules
-    style
-
-    constructor() {
-        this.loadConfig1()
-    }
-
-    async loadConfig1() {
-        try {
-            const cfg1 = JSON.parse(loadConfig());
-            this.websitetitle = cfg1.websitetitle
-            this.version = cfg1.version
-            this.build = cfg1.build
-            this.loadOnTheFly = cfg1.loadOnTheFly// deprecated
-            this.enableModules = cfg1.enableModules
-
-            await loadContentFromFile()
-            const content = getContent()
-            console.log("style: " + content.style)
-            this.style = content.style
-        
-            this.print()
-        } catch(err) {
-            console.log(err)
-        }
-    }
-
-    print() {
-        console.log("websitetitle:", this.websitetitle)
-        console.log("version:", this.version)
-        console.log("build:", this.build)
-        console.log("loadOnTheFly:", this.loadOnTheFly)
-        console.log("enableModules:", this.enableModules)
-        console.log("style", this.style)
-    }
-
-    setWebsiteTitle(websitetitle) {
-        websitetitle = websitetitle
-    }
-
-    modulesEnabled() {
-        return this.enableModules
-    }
-
-    isDebug() {
-        if(this.build == "debug") return true; 
-        else return false;
-    }
-
-    getPageConfig() {
-        const cfg_page = {}
-        cfg_page.routes = this.routes
-        let content = getContent()
-        cfg_page.websitetitle = content.websitetitle
-        cfg_page.style = this.style
-        return cfg_page
-    }
-
-}
 
 await loadContentFromFile()
-const config = new Config()
-export function setWebsiteTitle(websitetitle) {
+//const config = new Config()
+/*export function setWebsiteTitle(websitetitle) {
     config.setWebsiteTitle(websitetitle)
 }
 export function getPageConfig() {
     return config.getPageConfig()
-}
+}*/
+loadConfig1();
+print();
 
 const guestbook = new Guestbook();
-if(config.modulesEnabled()) {
+
+if(modulesEnabled()) {
     guestbook.install()
 }
 
@@ -106,12 +43,10 @@ export async function setAppGetPages1(router, content, getPageById, pageAction, 
     for(const page of content.pages) {
         let route = page.path
         let id = page.id
-    
+        
         router.get(route, (req, res, next) => {
-            req.page = getPageById(id) // callback function will be called when someone clicks an item from your menu
-                                            // to get accurate page data you have to use 'getPageByID' and not 'page'
-            //req.cfg = getPageConfig() //cfg
-            pageAction(req, res, next)
+            req.id = id
+            pageAction(req, res, next);
         });
     }
     //buildRoutes();
@@ -136,13 +71,12 @@ function setAppGet() {
             firsttime = true
         }
         if(firsttime) {
-            //res.render('setup', { title: "Website Setup", cfg: page_cfg})
             const page = new SetupPage("setup", "Website Setup")
             page.render(res)
             //res.render('setup', { title: "Website Setup", cfg: page_cfg})
         } else {
             //res.render('home', { cfg: page_cfg, websitetitle: page_cfg.websitetitle, text: "" })
-            if(config.isDebug()) {
+            if(isDebug()) {
                 try {
                     let notes = getNotes()
                     const page = new HomePage(notes.todolist, notes.issues)
@@ -160,8 +94,6 @@ function setAppGet() {
         }
     })
     router.get('/setup', (req,res) => {
-        //res.render('setup', { title: "Website Setup", cfg: page_cfg})
-        //const page_cfg = getPageConfig()
         const page = new SetupPage("setup", "Website Setup")
         page.render(res)
         //res.render('setup', { title: "Website Setup", cfg: page_cfg})
@@ -173,8 +105,7 @@ function setAppGet() {
         formAction(req, res)
     });
     router.get('/page/delete/:id?', (req, res) => { 
-        req.cfg = config.getPageConfig();
-        req.cfg = config.getPageConfig();
+        req.cfg = getPageConfig();
         deleteAction(req, res)
     });
     router.get('/settings', (req,res)=>{
@@ -184,10 +115,9 @@ function setAppGet() {
 
     router.post('/settings/save', saveSettingsAction)
     
-    if(config.modulesEnabled()) {
+    if(modulesEnabled()) {
         router.get(guestbook.route, (req, res) => {
-            req.cfg = config.getPageConfig()
-            req.cfg = config.getPageConfig()
+            req.cfg = getPageConfig()
             guestbook.action(req, res)
         })
     }
@@ -213,7 +143,7 @@ function setAppGet() {
 //getContentFromFileSync()
 //await getContentFromFile()
 //buildRoutes()
-if(config.isDebug()) {
+if(isDebug()) {
     try {
         await loadNotesFromFile()
     } catch(err) {

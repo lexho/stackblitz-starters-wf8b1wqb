@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import removeRoute from 'express-remove-route'; // phantom pages
 import cors from 'cors';
 
-import { router, getPageConfig } from './routing.js';
+import { router } from './routing.js';
 import { writeToFile } from './storage_ram.js';
 import ejs from 'ejs';
 import { getConfig } from './model_async.js'
@@ -14,26 +14,18 @@ import { ErrorPage } from './page.js'
 const app = express();
 export function start() {
     //app = express(); // TODO changed
-    //app = express(); // TODO changed
 
-    app.set('view engine', 'ejs')
     app.set('view engine', 'ejs')
 
     app.use(express.static(`${dirname(fileURLToPath(import.meta.url))}/public`))
     app.use(express.json())
-    app.use(express.static(`${dirname(fileURLToPath(import.meta.url))}/public`))
-    app.use(express.json())
 
-    app.use(morgan('common', { immediate: true }));
     app.use(morgan('common', { immediate: true }));
 
     app.use(express.urlencoded({ extended: false }));
-    app.use(express.urlencoded({ extended: false }));
 
     app.use(cors())
-    app.use(cors())
 
-    app.use('/', router); // (req, res, next) => { next() }
     app.use('/', router); // (req, res, next) => { next() }
 
     app.use((req, res, next) => {

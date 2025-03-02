@@ -1,4 +1,4 @@
-import  { getPageConfig } from './routing.js'
+import  { getPageConfig } from './config.js'
 import { getContent } from './model_async.js'
 
 export class Page {
