@@ -9,82 +9,87 @@ import { pageAction, saveAction, saveSettingsAction, formAction, deleteAction, s
 import { Guestbook } from './modules/guestbook.js'
 import { access, constants } from 'node:fs/promises';
 
-export let cfg = {
-    "websitetitle": "",
-    "version": "0.0",
-    "build": "debug",
-    "loadOnTheFly": false,
-    "enableModules": false,
-    "style": undefined
+import { HomePage, SetupPage, SettingsPage } from './page.js';
+//import { config } from 'node:process';
+
+class Config {
+
+    websitetitle
+    version
+    build
+    loadOnTheFly // deprecated
+    enableModules
+    style
+
+    constructor() {
+        this.loadConfig1()
+    }
+
+    async loadConfig1() {
+        try {
+            const cfg1 = JSON.parse(loadConfig());
+            this.websitetitle = cfg1.websitetitle
+            this.version = cfg1.version
+            this.build = cfg1.build
+            this.loadOnTheFly = cfg1.loadOnTheFly// deprecated
+            this.enableModules = cfg1.enableModules
+
+            await loadContentFromFile()
+            const content = getContent()
+            console.log("style: " + content.style)
+            this.style = content.style
+        
+            this.print()
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    print() {
+        console.log("websitetitle:", this.websitetitle)
+        console.log("version:", this.version)
+        console.log("build:", this.build)
+        console.log("loadOnTheFly:", this.loadOnTheFly)
+        console.log("enableModules:", this.enableModules)
+        console.log("style", this.style)
+    }
+
+    setWebsiteTitle(websitetitle) {
+        websitetitle = websitetitle
+    }
+
+    modulesEnabled() {
+        return this.enableModules
+    }
+
+    isDebug() {
+        if(this.build == "debug") return true; 
+        else return false;
+    }
+
+    getPageConfig() {
+        const cfg_page = {}
+        cfg_page.routes = this.routes
+        let content = getContent()
+        cfg_page.websitetitle = content.websitetitle
+        cfg_page.style = this.style
+        return cfg_page
+    }
+
 }
 
-try {
-    const cfg1 = JSON.parse(loadConfig()); // load config from config.json
-    cfg.websitetitle = cfg1.websitetitle
-    cfg.version = cfg1.version
-    cfg.build = cfg1.build
-    cfg.loadOnTheFly = cfg1.loadOnTheFly
-    cfg.enableModules = cfg1.enableModules
-    
-    await loadContentFromFile()
-    const content = getContent()
-    console.log("style: " + content.style)
-    cfg.style = content.style
-
-    console.log(cfg)
-} catch(err) {
-    console.log(err)
+await loadContentFromFile()
+const config = new Config()
+export function setWebsiteTitle(websitetitle) {
+    config.setWebsiteTitle(websitetitle)
 }
-
-/** get releveant config for page */
 export function getPageConfig() {
-    const cfg_page = {}
-    cfg_page.routes = cfg.routes
-    let content = getContent()
-    cfg_page.websitetitle = content.websitetitle
-    cfg_page.style = cfg.style
-    return cfg_page
-}
-
-export function setStyle(style) {
-    cfg.style = style
+    return config.getPageConfig()
 }
 
 const guestbook = new Guestbook();
-if(cfg.enableModules) {
+if(config.modulesEnabled()) {
     guestbook.install()
-}
-
-/*if(cfg.build == "debug") {
-    let notes = await getNotesFromFile()
-    let todo = []
-    let issues = []
-
-    if(!typeof notes.todolist === undefined) {
-        todo = notes.todolist;
-    }
-    if(!typeof notes.issues === undefined) {
-        issues = notes.issues;
-    }
-    cfg.todo = todo;
-    cfg.issues = issues;
-}*/
-//routes = [ { "path": "/", "label": "home"} ] ;
-
-export async function buildRoutes() {
-    console.log("build routes")
-    let routes = [];
-    let content = getContent() //TODO remove
-    //let obj = {"websitetitle": "", "style": "stylecss", "page": "mypage", "pages": []}
-    //if(typeof content === undefined) 
-    //let content = new Content(obj) //
-    for(let page of content.pages) {
-        routes.push({ path: page.path, label: page.title })
-    }
-    routes.push({ path: '/page/new', label: "Neue Seite" })
-    routes.push({ path: '/settings', label: "Settings" })
-    cfg.routes = routes;
-    if(!typeof content.style === undefined)  cfg.style = content.style
 }
 
 /** set up get request handlers for pages 
@@ -102,14 +107,14 @@ export async function setAppGetPages1(router, content, getPageById, pageAction, 
         let route = page.path
         let id = page.id
     
-        router.get(route, (req, res) => {
+        router.get(route, (req, res, next) => {
             req.page = getPageById(id) // callback function will be called when someone clicks an item from your menu
                                             // to get accurate page data you have to use 'getPageByID' and not 'page'
-            req.cfg = getPageConfig() //cfg
-            pageAction(req, res)
+            //req.cfg = getPageConfig() //cfg
+            pageAction(req, res, next)
         });
     }
-    buildRoutes();
+    //buildRoutes();
     setAppGet()
 }
 
@@ -131,48 +136,58 @@ function setAppGet() {
             firsttime = true
         }
         if(firsttime) {
-            const page_cfg = getPageConfig()
-            res.render('setup', { title: "Website Setup", cfg: page_cfg})
+            //res.render('setup', { title: "Website Setup", cfg: page_cfg})
+            const page = new SetupPage("setup", "Website Setup")
+            page.render(res)
+            //res.render('setup', { title: "Website Setup", cfg: page_cfg})
         } else {
-            const page_cfg = getPageConfig()
-            if(cfg.build == "debug") {
-                let notes = getNotes()
-                let todo = []
-                let issues = []
-                todo = notes.todolist;
-                issues = notes.issues;
-                page_cfg.todo = todo;
-                page_cfg.issues = issues;
+            //res.render('home', { cfg: page_cfg, websitetitle: page_cfg.websitetitle, text: "" })
+            if(config.isDebug()) {
+                try {
+                    let notes = getNotes()
+                    const page = new HomePage(notes.todolist, notes.issues)
+                    page.render(res)
+                } catch(err) {
+                    console.error(err)
+                    const page = new HomePage()
+                    page.render(res)
+                }
+            } else {
+                const page = new HomePage()
+                page.render(res)
             }
-            //TODO cfg soll hier vielleicht gar nich verfügbar sein
-            res.render('home', { cfg: page_cfg, websitetitle: page_cfg.websitetitle, text: "" })
             //res.end("home")
         }
     })
     router.get('/setup', (req,res) => {
-        const page_cfg = getPageConfig()
-        res.render('setup', { title: "Website Setup", cfg: page_cfg})
+        //res.render('setup', { title: "Website Setup", cfg: page_cfg})
+        //const page_cfg = getPageConfig()
+        const page = new SetupPage("setup", "Website Setup")
+        page.render(res)
+        //res.render('setup', { title: "Website Setup", cfg: page_cfg})
     })
     const upload1 = multer({ dest: 'uploads/' }).single('avatar')
     router.post('/setup/save', upload1, setupAction)
     router.get('/page/new/:path?', (req, res) => { 
-        req.cfg = getPageConfig();
+        //req.cfg = config.getPageConfig();
         formAction(req, res)
     });
     router.get('/page/delete/:id?', (req, res) => { 
-        req.cfg = getPageConfig();
+        req.cfg = config.getPageConfig();
+        req.cfg = config.getPageConfig();
         deleteAction(req, res)
     });
     router.get('/settings', (req,res)=>{
-        const cfg = getPageConfig()
-        res.render('settings', {cfg: cfg, title: "Settings", checked: cfg.style })
+        const page = new SettingsPage('/settings', "Settings")
+        page.render(res)
     });
 
     router.post('/settings/save', saveSettingsAction)
     
-    if(cfg.enableModules) {
+    if(config.modulesEnabled()) {
         router.get(guestbook.route, (req, res) => {
-            req.cfg = getPageConfig()
+            req.cfg = config.getPageConfig()
+            req.cfg = config.getPageConfig()
             guestbook.action(req, res)
         })
     }
@@ -192,26 +207,26 @@ function setAppGet() {
     }).array('photos', 50) //.single('image')
 
     //router.post('/page/save', saveAction)
-    router.post('/page/save', (req, res, next) => { 
-        console.log(req.file); 
-        console.log(req.image);
-        console.log(req.body); 
-        console.log(req.body.data)
-        upload(req, res, next); 
-    }, saveAction) 
+    router.post('/page/save', upload, saveAction)
 }
 
 //getContentFromFileSync()
 //await getContentFromFile()
-buildRoutes()
-if(cfg.build == "debug") await loadNotesFromFile()
+//buildRoutes()
+if(config.isDebug()) {
+    try {
+        await loadNotesFromFile()
+    } catch(err) {
+        console.error(err)
+    }
+}
 
 const router = Router();
 
-setAppGetPages1(router, getContent(), getPageById, pageAction, buildRoutes, setAppGet)
+setAppGetPages1(router, getContent(), getPageById, pageAction, ()=> {}, setAppGet)
 
 export async function setAppGetPages() {
-    return setAppGetPages1(router, getContent(), getPageById, pageAction, buildRoutes, setAppGet);
+    return setAppGetPages1(router, getContent(), getPageById, pageAction, () => {}, setAppGet);
 }
 
 export { router };

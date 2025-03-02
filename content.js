@@ -5,7 +5,6 @@ class Page {
         this.layout = layout;
         this.title = title;
         this.path = path;
-        console.log("path: " + path);
         if (typeof path === "undefined") {
             throw new Error('page with broken path');
         }

@@ -5,6 +5,8 @@ import { replaceUmlaute } from './public/js/utility.js';
 import { getContent, save, deletePage, getPageByPath, saveSettings, saveSetup } from './model_async.js';
 import { setAppGetPages } from './routing.js';
 //import { removeRoute1 } from './webserver.js';
+import { TextWithTitle, Gallery, Index, TextWithGallery } from './page.js';
+import { EditPage, FormPage } from './page.js'
 
 /** 
  * set parameter to render page
@@ -12,31 +14,43 @@ import { setAppGetPages } from './routing.js';
  * @param {Object} res - rendered response of the webserver
  */
 export async function pageAction(req, res, next) {
-    /*if(req.page === undefined) { // extrahiert
-        res.send("Error 404. page not found."); // TODO !!!
-        return 
-    }*/
     try {
-        const page = req.page // extract
-        const cfg = req.cfg // extract
+        const page1 = req.page 
 
         // usin path instead of id
-        const path = page.path // extract
-        const layout = page.layout; // extract
-        const title = page.title; // extract
-        const text = page.text; // extract
-        const images = page.images; // extract
+        const path = page1.path 
+        const layout = page1.layout; 
+
+        //(websitetitle, routes, style)
         
         // View with content
-        if(layout == "text-with-title")
-            res.render('text-with-title', { cfg: cfg, title: title, path: path, text: text })
-        else if(layout == "gallery")
-            res.render('gallery', { cfg: cfg, title: title, path: path, images: images })
-        else if(layout == "text-with-gallery")
-            res.render('text-with-gallery', { cfg: cfg, title: title, path: path, text: text, images: images})
-        
-        else
-            res.render('index', { cfg: cfg, title: title, path: path, text: text})
+        if(layout == "text-with-title") {
+            const title = page1.title; 
+            const text = page1.text; 
+            const page = new TextWithTitle(path, title, text)
+            //res.render('text-with-title', { cfg: cfg, title: title, path: path, text: text })
+            page.render(res) }
+        else if(layout == "gallery") {
+            const title = page1.title; 
+            const images = page1.images;
+            const page = new Gallery(path, title, images)
+            page.render(res) 
+            //res.render('gallery', { cfg: cfg, title: title, path: path, images: images })
+
+        } else if(layout == "text-with-gallery") {
+            //res.render('text-with-gallery', { cfg: cfg, title: title, path: path, text: text, images: images})
+            const title = page1.title; 
+            const text = page1.text; 
+            const images = page1.images; 
+            const page = new TextWithGallery(path, title, text, images)
+            page.render(res) 
+        } else {
+            //res.render('index', { cfg: cfg, title: title, path: path, text: text})
+            const title = page1.title; 
+            const text = page1.text; 
+            const page = new Index(path, title, text)
+            page.render(res) 
+        }
     } catch(err) {
         next(err);
     }
@@ -52,7 +66,6 @@ export async function formAction(req, res, next) {
 }
 
 export async function formAction1(req, res, getPageByPath, next) {
-    const cfg = req.cfg
     try {
         if(req.params.path === undefined) throw new Error("no path error") // path does not exist yet --> new page
         const path = req.params.path
@@ -71,18 +84,21 @@ export async function formAction1(req, res, getPageByPath, next) {
         const layout = page.layout;
         const title = page.title;
         const text = page.text;
-        res.render('edit', { cfg: cfg, title: title, id: id, path: path, layout: layout, heading: title, text: text })
+        const page1 = new EditPage()
+        //res.render('edit', { cfg: cfg, title: title, id: id, path: path, layout: layout, heading: title, text: text })
+        page1.render(res)
     } catch(err) {
         console.log("new")
-        // TODO prüfen
         const id = 0;
         const path = "";
         const layout = "";
         const title1 = "Neue Seite";
         const title = "";
         const text = "";
-        res.render('form', { cfg: cfg, title1: title1, id: id, path: path, layout: layout, title: title, text: text })
+        const page = new FormPage() // TODO prüfen
+        //res.render('form', { cfg: cfg, title1: title1, id: id, path: path, layout: layout, title: title, text: text })
         //next(err);
+        page.render(res)
     }
 }
 
@@ -127,13 +143,15 @@ export function uniquePath(content, path) {
 */
 export async function saveAction(req, res, next) {
     console.log("saveAction")
-    console.log(req.body.id);
-    console.log(req.body.heading)
-    console.log(req.body.layout)
-    console.log(req.body.text)
-    // req.file
-    // req.files
+    /*
+    req.body.id);
+    req.body.heading)
+    req.body.layout)
+    req.body.text)
+    req.file
+    req.files
     // req.body will hold the text fields, if there were any
+    */
     const images = [];
     if(Array.isArray(req.files)) {
         // TODO verify content
@@ -158,12 +176,12 @@ export async function saveAction(req, res, next) {
         }
     } else {
         try {
-            let file = req.file // extract
+            let file = req.file 
             const filename = file.originalname + ".jpg"
             await copyFile(file.path, "public/images/" + filename);
             images.push({url:  filename, alt: ""})
         } catch(error) {
-            console.log(error)
+            //console.log(error)
             next(error)
         }
     }
@@ -187,13 +205,12 @@ export async function saveAction(req, res, next) {
         page.path = uniquePath(getContent(), page.path)
     }
 
-    console.log("page: " + JSON.stringify(page))
-    //console.log("page: " + page.toString()) // funktioniert nicht
+    //console.log("page: " + JSON.stringify(page))
 
     try {
     await save(page)
     await setAppGetPages(); 
-    console.log("saved")
+    console.log("page saved")
     res.redirect(page.path);
     } catch(error) {
         //console.error(error)
@@ -223,6 +240,7 @@ export async function saveSettingsAction(request, response) {
 }
 
 export async function saveSettingsAction1(request, response, saveSettings) { // for test
+    console.log("save settings action")
     const settings = {
         style: request.body.style,
     };

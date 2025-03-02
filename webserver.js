@@ -9,41 +9,50 @@ import { router, getPageConfig } from './routing.js';
 import { writeToFile } from './storage_ram.js';
 import ejs from 'ejs';
 import { getConfig } from './model_async.js'
+import { ErrorPage } from './page.js'
 
-let app;
+const app = express();
 export function start() {
-    app = express(); // TODO changed
+    //app = express(); // TODO changed
+    //app = express(); // TODO changed
 
-app.set('view engine', 'ejs')
+    app.set('view engine', 'ejs')
+    app.set('view engine', 'ejs')
 
-app.use(express.static(`${dirname(fileURLToPath(import.meta.url))}/public`))
-app.use(express.json())
+    app.use(express.static(`${dirname(fileURLToPath(import.meta.url))}/public`))
+    app.use(express.json())
+    app.use(express.static(`${dirname(fileURLToPath(import.meta.url))}/public`))
+    app.use(express.json())
 
-app.use(morgan('common', { immediate: true }));
+    app.use(morgan('common', { immediate: true }));
+    app.use(morgan('common', { immediate: true }));
 
-app.use(express.urlencoded({ extended: false }));
+    app.use(express.urlencoded({ extended: false }));
+    app.use(express.urlencoded({ extended: false }));
 
-app.use(cors())
+    app.use(cors())
+    app.use(cors())
 
-app.use('/', router); // (req, res, next) => { next() }
+    app.use('/', router); // (req, res, next) => { next() }
+    app.use('/', router); // (req, res, next) => { next() }
 
-app.use((req, res, next) => {
-    const cfg = getPageConfig() // page config
-    res.render('error', {  title: "Error 404", message: "Seite nicht gefunden.", stacktrace: "", cfg: cfg })
-    //res.status(404).send('Sorry cant find that!')
-})
-app.use(async(err, req, res, next) => {
-    console.error(err.code)
-    console.error(err.message)
-    console.error(err.stack)
-    let message = "Internal Server Error."
-    let stack = ""
-    const cfg1 = await getConfig()
-    if(cfg1.build == "debug") stack = err.stack;
-    const cfg = getPageConfig()
-    res.render('error', { title: "Error 500", message: message, stacktrace: stack, cfg: cfg } )
-    //res.status(500).send('Something broke!')
-})
+    app.use((req, res, next) => {
+        const page = new ErrorPage("Error 404", "Seite nicht gefunden.", "")
+        page.render(res)
+        //res.status(404).send('Sorry cant find that!')
+    })
+    app.use(async(err, req, res, next) => {
+        console.error(err.code)
+        console.error(err.message)
+        console.error(err.stack)
+        let stack = ""
+        const cfg1 = await getConfig()
+        if(cfg1.build == "debug") stack = err.stack;
+        //res.render('error', { title: "Error 500", message: message, stacktrace: stack, cfg: cfg } )
+        const page = new ErrorPage("Error 500", "Internal Server Error.", stack)
+        page.render(res)
+        //res.status(500).send('Something broke!')
+    })
 }
 
 export function stop() {

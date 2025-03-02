@@ -2,8 +2,8 @@ import { readFile, copyFile } from 'node:fs/promises';
 import { storeContent, storeNotes, getContent as getContentStorage, getNotes as getNotesStorage, writeToFile,
     getPageById as getPageByIdStorage, deletePageByPath, getPageByPath as getPageByPathStorage } from './storage_ram.js';
 import { Content } from './content.js';
-import { setAppGetPages, setStyle } from './routing.js';
-import { cfg } from './routing.js'
+import { setAppGetPages } from './routing.js';
+import { setWebsiteTitle } from './routing.js'
 
 export async function getConfig() {
     const data1 = await readFile('./config/config.json', 'utf-8')
@@ -64,6 +64,8 @@ async function insert(page) {
     const title = page.title
     const text = page.text
     const images = page.images;
+    console.log(JSON.stringify(page))
+    console.log(JSON.stringify(page))
     let data = {} // empty
     if(layout == "text-with-title") {
         data = { "id": id,"layout": layout,"title": title,"path": path,"text": text }
@@ -139,7 +141,7 @@ export async function saveSettings(settings) {
         }
     }
     content.style = style;
-    setStyle(style)
+    //setStyle(style)
     let content1 = new Content(content)
     storeContent(content1)
 
@@ -154,7 +156,10 @@ export async function saveSetup(websitetitle, file) { // kein next oder error?
         let content1 = new Content(content)
         content1.websitetitle = websitetitle
         storeContent(content1) // pass errors to controller
-        cfg.websitetitle = websitetitle
+        setWebsiteTitle(websitetitle)
+        //cfg.websitetitle = websitetitle
+        setWebsiteTitle(websitetitle)
+        //cfg.websitetitle = websitetitle
     } else {
         throw new Error("no website title defined")
     }

@@ -1,7 +1,6 @@
 class Page {
     //id: number = 0;
     constructor(public id: number, public layout: string, public title: string, public path: string) {
-        console.log("path: " + path)
         if(typeof path === "undefined") { throw new Error('page with broken path'); }
         else if(path.length == 0) { throw new Error('page with broken path'); }
     }
