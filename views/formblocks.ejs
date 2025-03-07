@@ -1,0 +1,215 @@
+<%- include('_header'); %>
+<style>
+    .form-select {
+        max-width: 300px;
+    }
+    input {
+        max-width: 300px;
+    }
+    textarea {
+        max-width: 600px;
+        height: 250px;
+    }
+</style>
+<div id="formblocks" class="container needs-validation was-validated" novalidate>
+    <h2><%= title %></h2>
+    <div class="mb-3" id="titlebox">
+        <label for=title" class="form-label">Überschrift</label>
+        <input id="title" type="text" name="title" class="form-control" aria-describedby="page title" value="<%= title %>" required/>
+        <div class="valid-feedback">
+            Sieht gut aus!
+          </div>
+        <div class="invalid-feedback">
+            Bitte wähle eine Überschrift!
+        </div>
+    </div>
+    <% for(const block of blocks) {%>
+        <% const title = block.title 
+        const p = block.p
+        %>
+        <div class="mb-3" id="headingbox1">
+            <label for="heading1" class="form-label">Überschrift1</label>
+            <input id="heading1" type="text" name="heading1" class="form-control" aria-describedby="heading" value="<%= title %>"/>
+        </div>
+        <div id="textbox1" class="mb-3">
+            <label for="text1" class="form-label">Text</label>
+            <textarea id="text1" name="text1" class="form-control" aria-label="text" required><%= block.p %></textarea>
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+            <div class="invalid-feedback">
+                Bitte gib einen Text ein.
+            </div>
+        </div>
+    <% } %>
+    
+    <!--<div id="imagebox1" class="mb-3">
+        <label for="image1" class="form-label">Image</label>
+        <div class="row">
+        <div class="col-md-4">
+            <label for="image1src" class="form-label">src</label>
+            <input id="image1src" type="text" name="image1src" class="form-control" aria-describedby="src of image" value="images/20240715_163626.jpg"/>
+        </div>
+        <div class="col-md-4">
+            <label for="image1src" class="form-label">alt</label>
+            <input id="image1alt" type="text" name="image1alt" class="form-control" aria-describedby="description of the image" value="an image"/>
+        </div>
+        </div>
+        <div class="valid-feedback">
+            Looks good!
+        </div>
+    </div>-->
+    <style>
+        .addblock {
+            width: 90%;
+            margin: 1px;
+        }
+    </style>
+
+    <!--<script  src="/js/addblocks.min.js">-->
+ 
+    </script>
+</div>
+
+<div class="container">
+    <!--<button type="button" class="btn btn-secondary">Add Block</button><br />-->
+    <button type="button" class="btn btn-secondary addblock" onClick="addTextBlock();">Add TextBlock</button><br />
+    <!--<button type="button" class="btn btn-secondary addblock">Add ImageBlock</button><br />-->
+    <button type="button" class="btn btn-secondary addblock" onClick="addGalleryBlock();">Add GalleryBlock</button><br />
+
+    <input id="submit" type="text" class="btn btn-primary" onClick="submit();" value="Upload" />
+    <!--<button class="btn btn-primary" type="submit">Submit form</button>-->
+</div>
+  <script>
+    const upload_id = new Date().getTime();
+
+    let gallery_id = 1
+    let images = [] // contains all images, grouped
+    //images[0] = [] // images1
+    //  images[1] = [] // images2
+    //let images1 = [] //[image000, image001, image002] 
+    //let images2 = []
+
+    /*function submitImages() {
+        formData.set('upload_id', upload_id) 
+        formData.set('gallery_id', gallery_id)
+        const url = '/image/save'
+        return fetch(url, {
+        method: 'POST',
+        body: formData
+        }).then(res => { console.log('file upload done.') })
+    }*/
+
+    function submit() {
+        //submitImages();
+        let title = document.getElementById("title").value
+        let layout = "blocks" //document.getElementById("layout").value
+        let heading1 = document.getElementById("heading1").value
+        let text1 = document.getElementById("text1").value
+
+        // files (binary) /js/compress.js
+        //formData.append('photos', file, "file" + counter) --> multer in routing.js --> req.files
+        // file data (src, alt)
+
+        blocks.push({type: "text", heading: heading1, paragraph: text1})
+        //blocks.push({type: "text", heading: heading2, paragraph: text2})
+
+        // fill blocks with values from the form
+        let id = 1
+        for(let b of blocks1) {
+            if(b.type == "text") {
+                let h = b.heading.value
+                let p = b.text.value
+                let b1 = {type: "text", heading: h, paragraph: p}
+                blocks.push(b1)    
+            }
+            if(b.type == "gallery") {
+                let index = id-1
+                let images1 = images[index]
+                console.log("id:",id)
+                console.log("index:",index)
+                console.log("images:",images)
+                console.log("images1:",images1)
+                let b1 = {type: "gallery", id: id, images: images1}
+                id++;
+                blocks.push(b1)
+            }
+        }
+
+        //blocks.push({type: "image", src: src, alt: alt})
+        //blocks.push({type: "gallery", images: [{type: "image", src: src, alt: alt},{type: "image", src: src, alt: alt}]})
+        //blocks.push({type: "gallery", id: 1, images: images[0]})
+        //blocks.push({type: "gallery", id: 2, images: images[1]})
+        //blocks.push({type: "gallery", id: 3, images: images[2]})
+
+        console.log(JSON.stringify(blocks))
+
+        formData.set('upload_id', upload_id)
+        formData.set('layout', layout)
+        formData.set('title', title)
+        formData.set('blocks', JSON.stringify(blocks))
+
+        /*formData.set('heading1', heading1)
+        formData.set('text1', text1)
+        formData.set('heading2', heading2)
+        formData.set('text2', text2)*/
+        const url = '/page/save'
+        
+        let path = "/" + title.toLowerCase().replaceAll(" ", "") //replaceUmlaute(heading.toLowerCase().replaceAll(" ", ""))
+        // get unique path from server
+        return fetch(url, {
+        method: 'POST',
+        body: formData
+        }).then(res => { window.open(path,"_self") })
+        .then(body => console.log('got server response', body))
+    }
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/3.21.1/minified.min.js"
+  integrity="sha512-U2gvuX8NaNSc0MOOvd1CTMp/kuzhlJ8HJKWF4G8JAw66iH+1keU5Mrzzrnqktf1SphOCow6dy69sTdblJdI8mA=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/browser-image-compression@latest/dist/browser-image-compression.js"></script>
+  <!--<script type="text/javascript" src="http://localhost:8080/js/utility.js"></script>-->
+<script src="/js/custom.min.js"></script>
+<script>
+    function compressImages(event, useWebWorker, imageID) { // imageID brauch ma doch für log
+      for(let file of event.target.files) {
+        filenames.push(file.name)
+
+        console.log("imageID:",imageID) // --> gallery_id
+        gallery_id = imageID.substring("#web-worker".length)
+        let image000 = { url: "images/" + upload_id + "_"+gallery_id+"/"+file.name, alt: "uploaded image" }
+        let index = gallery_id-1
+        console.log("index:",index)
+        images[index].push(image000)
+        console.log("compr Img images:", images)
+        //images1.push(image000) // for gallery
+        //images2.push(file.name)
+
+        workers.push(compressImage(file, useWebWorker, imageID))
+      }
+      Promise.all(workers).then(
+        (values) => {
+            console.log("compression finished"); 
+            let submitButton = document.getElementById("submit")
+            submitButton.setAttribute("onClick", "submit();")
+            submitButton.setAttribute("class", "btn btn-primary")
+            submitImages();
+        } 
+    )
+    }
+    
+    function submitImages() {
+      formData.set('upload_id', upload_id) 
+      formData.set('gallery_id', gallery_id)
+      const url = '/image/save'
+      return fetch(url, {
+      method: 'POST',
+      body: formData
+      }).then(res => { console.log('file upload done.') })
+  }
+    </script>
+    </body>
+</html>
+<%- include('_footer'); %>

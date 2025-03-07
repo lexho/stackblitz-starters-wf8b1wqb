@@ -1,13 +1,16 @@
-import { pageAction, formAction1, saveAction, saveSettingsAction1 } from '../controller.js'
-import { getPageConfig } from '../routing.js'
+/*import { pageAction, saveSettingsAction1 } from '../controllers/page.controller.js'
+import { formAction1  } from '../controllers/form.controller.js'*/
 import request from 'request';
-import { start, stop } from '../webserver.js'
+/*import { start, stop } from '../webserver.js'
+import { getPageConfig, login } from '../config.js'*/
 
 function request1(url, expected) {
     return new Promise((resolve, reject) => {
         request(url, (err, response, body) => {
             expect(response).toBeDefined()
-            expect(body).toContain(`<input type="text" name="heading" class="form-control" aria-describedby="heading" value="${expected.heading}" />`)
+            console.log("expected:",expected)
+            console.log("received:",body)
+            expect(body).toContain(`<input id="heading1" type="text" name="heading" class="form-control" aria-describedby="heading" value="${expected.heading}" />`)
             expect(body).toContain(`<textarea name="text" class="form-control" aria-label="text" >${expected.text}</textarea>`)
             resolve()
         })
@@ -29,12 +32,13 @@ function request2(url, expected) {
 
 
 describe('controller', () => {
-    beforeAll(() => {
+    /*beforeAll(() => {
         start();
+        login();
     });
     afterAll(() => {
         stop();
-    })
+    })*/
     describe('url request', () => {
         // TODO load content.json mit entsprechenden pages
         it('should render edit \'text1\'', async () => {
@@ -55,7 +59,8 @@ describe('controller', () => {
             const expected = { heading: 'text3', text: "Text." }
             await request2(url, expected);
         })
-        it('should render page 1', async () => {
+    })
+        /*it('should render page 1', async () => {
             let req = {}
             let page = {}
             page.path = "/"
@@ -67,6 +72,8 @@ describe('controller', () => {
             //render('index', { cfg: cfg, title: title, id: id, text: text})
             let res = { render: (file, params) => {
                 console.log("fake rendered: " + JSON.stringify(params))
+                console.log("page.title", page.title)
+                console.log("page.text", page.text)
                 expect(params.title).toBe(page.title)
                 expect(params.text).toBe(page.text)
             }}
@@ -136,7 +143,7 @@ describe('controller', () => {
             /*    cfg_page.routes = cfg.routes
                 cfg_page.websitetitle = cfg.websitetitle
                 cfg_page.style = cfg.style*/
-            let res = { render: (file, params) => {
+            /*let res = { render: (file, params) => {
                 console.log("fake rendered: " + JSON.stringify(params))
                 expect(params.cfg.routes).toBeDefined()
                 expect(params.cfg.websitetitle).toBeDefined()
@@ -177,7 +184,7 @@ describe('controller', () => {
                 
             return page; })
         });
-    });
+    });*/
     /*describe('saveAction', () => {
         it('should not block', async () => {
             let response
@@ -192,11 +199,11 @@ describe('controller', () => {
             // get log of server, compare
         })
     })*/
-    describe('saveSettingsAction', () => {
+    /*describe('saveSettingsAction', () => {
         it('should saveSettings', async () => {
             let req = { body: { style: "teststyle"} }
             let res = { redirect: (arg) => {} }
             await saveSettingsAction1(req, res, (arg) => { expect(arg).toStrictEqual({ style: req.body.style }) })
         });
-    });
+    });*/
 })

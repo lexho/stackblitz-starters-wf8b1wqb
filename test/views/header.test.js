@@ -59,7 +59,8 @@ describe('view', () => {
         it('should render header view debuginfo', () => {
             ejs.renderFile(file, params, (err, data) => {
                 //expect(data).toContain('<div class="h-100 d-inline-block">' + params.cfg.build + ' ' + params.cfg.version + '</div>')
-                expect(data).toContain(`<div class="h-100 d-inline-block">${params.cfg.build} ${params.cfg.version}</div>`)
+                console.log(data)
+                expect(data).toContain(`<div class="h-100 d-inline-block">${params.cfg.build} ${params.cfg.version}`)
             });
         });
     });

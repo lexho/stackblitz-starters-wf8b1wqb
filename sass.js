@@ -1,7 +1,7 @@
 import * as sass from 'sass'
 import { writeFile } from 'fs';
 
-const scssFilename = 'scss/styles.scss';
+const scssFilename = './scss/styles.scss';
 const result = sass.compile(scssFilename);
 
 // OR

@@ -19,7 +19,7 @@ nav, .container { border: 0px solid black; }
 
 a:visited { color: black; }
 
-h3 { background-color: $lightgray; }
+h3 { /*background-color: $lightgray;*/ }
 audio { margin-bottom: 0.5em; }
 img { max-width: 50vw; }
 a:hover { color: $lightgray; background-color: black; }
@@ -90,4 +90,8 @@ a:visited {
 
 header {
     background: linear-gradient(0.25turn, white, #3f87a6);
+}
+
+.badge {
+    font-size: 15px;
 }

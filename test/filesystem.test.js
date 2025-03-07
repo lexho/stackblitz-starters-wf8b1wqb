@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { getConfig } from '../model_async.js';
+import { getConfig } from '../models/model_async.js';
 
 describe('filesystem', () => {
     //let content;

@@ -9,7 +9,8 @@
     <body>
         <header class="d-flex background-transp">
             <h1 class="h-100 d-inline-block topline"><%= cfg.websitetitle %></h1>
-            <% if(cfg.build == "debug") { %><div class="h-100 d-inline-block"><%= cfg.build %> <%= cfg.version %></div><% } %>
+            <% if(cfg.build == "debug") { %><div class="h-100 d-inline-block"><%= cfg.build %> <%= cfg.version %>
+            <% if(cfg.isLoggedIn){ %>logged in <% } %></div><% } %> 
         </header>
         <div class="container nav-container">
             <nav class="navbar navbar-expand-lg bg-body-tertiary">

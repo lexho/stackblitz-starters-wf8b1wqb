@@ -1,8 +1,7 @@
 import { readFile } from 'node:fs/promises';
-import { getContent, getConfig, save, loadContentFromFile, loadNotesFromFile, getNotes } from '../model_async.js';
-import { TextWithTitle } from '../content.js'
-import { getContent as getContentStorage, storeContent, setFilename } from '../storage_ram.js'
-import { Content } from '../content.js';
+import { getContent, getConfig, save, loadContentFromFile, loadNotesFromFile, getNotes } from '../models/model_async.js';
+import { TextWithTitle, Content } from '../models/content.js'
+import { getContent as getContentStorage, storeContent, setFilename } from '../models/storage_ram.js'
 
 describe('model', () => {
     

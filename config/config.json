@@ -1,6 +1,6 @@
 {
     "websitetitle": "Alexander's Seite",
-    "version": "0.10",
+    "version": "0.11",
     "build": "release",
     "loadOnTheFly": true,
     "enableModules": true

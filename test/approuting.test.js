@@ -1,8 +1,8 @@
-import { Content } from '../content.js'
+import { Content } from '../models/content.js'
 import { Guestbook } from '../modules/guestbook.js'
 import { setAppGetPages1 } from '../routing.js'
-import { uniquePath } from '../controller.js'
-import { getPageById } from '../model_async.js'
+import { uniquePath } from '../controllers/controller.js'
+import { getPageById } from '../models/model_async.js'
 
 // für neue Seite
 let obj_newpage = {"websitetitle":"Alexander's Seite","page":"mypage","style":"stylecss","pages":[

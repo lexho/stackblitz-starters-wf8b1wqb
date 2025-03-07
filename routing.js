@@ -1,25 +1,17 @@
 import { Router } from 'express';
 import multer from 'multer';
-
-import { getContent, loadContentFromFile, getNotes, loadNotesFromFile, getPageById } from './model_async.js';
-import { pageAction, saveAction, saveSettingsAction, formAction, deleteAction, setupAction } from './controller.js';
-
-import { Guestbook } from './modules/guestbook.js'
 import { access, constants } from 'node:fs/promises';
 
-import { HomePage, SetupPage, SettingsPage } from './page.js';
+import { getContent, loadContentFromFile, getNotes, loadNotesFromFile, getPageById } from './models/model_async.js';
+import { pageAction, saveSettingsAction, deleteAction, setupAction } from './controllers/page.controller.js';  
+import { formAction, saveAction, saveImageFilesAction } from './controllers/form.controller.js';  
+import { Guestbook } from './modules/guestbook.js'
+import { HomePage, SetupPage, SettingsPage } from './views/page.js';
 import { loadConfig1, print, modulesEnabled, isDebug, getPageConfig } from './config.js'
 //import config from './config.js'
 
 
 await loadContentFromFile()
-//const config = new Config()
-/*export function setWebsiteTitle(websitetitle) {
-    config.setWebsiteTitle(websitetitle)
-}
-export function getPageConfig() {
-    return config.getPageConfig()
-}*/
 loadConfig1();
 print();
 
@@ -37,9 +29,6 @@ if(modulesEnabled()) {
 export async function setAppGetPages1(router, content, getPageById, pageAction, buildRoutes, setAppGet) {
     console.log("set app GET pages")
 
-    /*console.log("content page 1: " + JSON.stringify(content.pages[0]))
-    console.log("content length: " + JSON.stringify(content.pages.length))*/
-
     for(const page of content.pages) {
         let route = page.path
         let id = page.id
@@ -49,6 +38,10 @@ export async function setAppGetPages1(router, content, getPageById, pageAction, 
             pageAction(req, res, next);
         });
     }
+    router.get("textblock1", (req, res, next) => {
+        req.id = id
+        pageAction(req, res, next);
+    });
     //buildRoutes();
     setAppGet()
 }
@@ -73,9 +66,7 @@ function setAppGet() {
         if(firsttime) {
             const page = new SetupPage("setup", "Website Setup")
             page.render(res)
-            //res.render('setup', { title: "Website Setup", cfg: page_cfg})
         } else {
-            //res.render('home', { cfg: page_cfg, websitetitle: page_cfg.websitetitle, text: "" })
             if(isDebug()) {
                 try {
                     let notes = getNotes()
@@ -90,18 +81,15 @@ function setAppGet() {
                 const page = new HomePage()
                 page.render(res)
             }
-            //res.end("home")
         }
     })
     router.get('/setup', (req,res) => {
         const page = new SetupPage("setup", "Website Setup")
         page.render(res)
-        //res.render('setup', { title: "Website Setup", cfg: page_cfg})
     })
     const upload1 = multer({ dest: 'uploads/' }).single('avatar')
     router.post('/setup/save', upload1, setupAction)
     router.get('/page/new/:path?', (req, res) => { 
-        //req.cfg = config.getPageConfig();
         formAction(req, res)
     });
     router.get('/page/delete/:id?', (req, res) => { 
@@ -134,15 +122,12 @@ function setAppGet() {
                 return cb(err);
             }
         },
-    }).array('photos', 50) //.single('image')
+    }).array('photos', 50)
 
-    //router.post('/page/save', saveAction)
     router.post('/page/save', upload, saveAction)
+    router.post('/image/save', upload, saveImageFilesAction)
 }
 
-//getContentFromFileSync()
-//await getContentFromFile()
-//buildRoutes()
 if(isDebug()) {
     try {
         await loadNotesFromFile()

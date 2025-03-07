@@ -1,0 +1,20 @@
+<%- include('_header'); %>
+<style>.image { max-height: 75vh; }</style>
+<style>
+    img { width: 400px; height: 400px; }
+    .image { width: 400px; height: 400px; margin: 3px; margin-bottom: 1.0em; }
+    #photobox { margin-top: 1.0em; }
+</style>
+<main id="content" class="container-fluid">
+    <div class="row align-items-start">
+        <div class="col">
+            <h1><%= title %><%- include('_buttons') -%></h1>
+        </div>
+    </div>  
+            <% for(const block of blocks) {%>
+                <div class="row align-items-start"><%- block.toHtml() -%></div>
+            <% } %>
+    
+</main>
+
+<%- include('_footer'); %>

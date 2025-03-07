@@ -58,7 +58,7 @@ describe('view', () => {
         it('should render ' + filename + ' view debuginfo', () => {
             ejs.renderFile(filepath, params, (err, data) => {
                 //expect(data).toContain('<div class="h-100 d-inline-block">' + params.cfg.build + ' ' + params.cfg.version + '</div>')
-                expect(data).toContain(`<div class="h-100 d-inline-block">${params.cfg.build} ${params.cfg.version}</div>`)
+                expect(data).toContain(`<div class="h-100 d-inline-block">${params.cfg.build} ${params.cfg.version}`)
             });
         });
         it('should render ' + filename + ' view headline', () => {

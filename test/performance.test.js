@@ -1,5 +1,4 @@
 import request from 'request';
-import { getContent } from '../model.js';
 import { start, stop } from '../webserver.js'
 
 const numberOfRequests = 10

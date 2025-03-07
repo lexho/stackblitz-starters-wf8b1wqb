@@ -1,5 +1,5 @@
-import { loadConfig }  from './model.js'
-import { loadContentFromFile, getContent } from './model_async.js'
+import { loadConfig }  from './models/model.js'
+import { loadContentFromFile, getContent } from './models/model_async.js'
 
 
 let websitetitle
@@ -8,6 +8,7 @@ let build
 let loadOnTheFly // deprecated
 let enableModules
 let style
+let isLoggedIn = false
 
 export async function loadConfig1() {
     try {
@@ -18,13 +19,30 @@ export async function loadConfig1() {
         loadOnTheFly = cfg1.loadOnTheFly// deprecated
         enableModules = cfg1.enableModules
 
-        await loadContentFromFile()
+        //await loadContentFromFile()
         const content = getContent()
-        console.log("style: " + content.style)
         style = content.style
     } catch(err) {
         console.log(err)
     }
+}
+
+export function login() {
+    console.log("login")
+    isLoggedIn = true
+}
+
+export function logout() {
+    console.log("logout")
+    isLoggedIn = false
+}
+
+export function getBuild() {
+    return build;
+}
+
+export function getVersion() {
+    return version;
 }
 
 export function print() {
@@ -49,23 +67,33 @@ export function isDebug() {
     else return false;
 }
 
-function buildRoutes() {
+/** build routes for the menu */
+export function buildRoutes() {
     //console.log("build routes")
     let routes = [];
     let content = getContent()
     for(let page of content.pages) {
         routes.push({ path: page.path, label: page.title })
     }
-    routes.push({ path: '/page/new', label: "Neue Seite" })
-    routes.push({ path: '/settings', label: "Settings" })
+    if(isLoggedIn) {
+        routes.push({ path: '/page/new', label: "Neue Seite" })
+        routes.push({ path: '/settings', label: "Settings" })
+    }
+    if(!isLoggedIn)
+        routes.push({ path: "/login", label: "Login" })
+    else routes.push({ path: "/logout", label: "Logout"})
     return routes
 }
 
+/** get config for the page */
 export function getPageConfig() {
     const cfg_page = {}
     cfg_page.routes = buildRoutes()
     let content = getContent()
     cfg_page.websitetitle = content.websitetitle
     cfg_page.style = style
+    cfg_page.isLoggedIn = isLoggedIn
+    cfg_page.build = build
+    cfg_page.version = version
     return cfg_page
 }
