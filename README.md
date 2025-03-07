@@ -2,7 +2,7 @@
 
 ### run locally
     npm install
-    npx tsc
+    npm run build
     npm start
 ### start docker container
     # webserver without memory
